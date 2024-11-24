@@ -1,6 +1,6 @@
 "use client";
 
-import Refund from "@/components/policies/Rerfund/refund";
+import Refund from "@/components/policies/Refund/refund";
 import Footer from "@/components/layouts/footer/footer";
 import Navbar from "@/components/layouts/navbar/navbar";
 

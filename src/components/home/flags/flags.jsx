@@ -1,3 +1,4 @@
+"use client"
 // flags.jsx
 import { useEffect, useRef } from "react";
 import Image from "next/image";
