@@ -94,20 +94,10 @@ const Form = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <ToastContainer position="top-right" autoClose={3000} />
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
-        className="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 sm:p-8 lg:p-10"
-      >
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeInOut" }}
-          className="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-6"
-        >
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 sm:p-8 lg:p-10">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-6">
           {isLogin ? "Login" : "Registration"} Form
-        </motion.h1>
+        </h1>
 
         <div className="text-center mb-6">
           <button
@@ -120,25 +110,14 @@ const Form = () => {
           </button>
         </div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-sm sm:text-base text-center text-gray-600 mb-8"
-        >
+        <p className="text-sm sm:text-base text-center text-gray-600 mb-8">
           {isLogin
             ? "Please enter your credentials to login"
             : "Fill in your details to register for the Global Innovator Olympiad"}
-        </motion.p>
+        </p>
 
-        <motion.form
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-        >
-          {/* Show email and password for both login and register */}
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 w-full">
+          {/* Email */}
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -153,7 +132,7 @@ const Form = () => {
             />
           </div>
 
-          {/* Show password only in login and registration */}
+          {/* Password */}
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -171,6 +150,7 @@ const Form = () => {
           {/* Registration-specific fields */}
           {!isLogin && (
             <>
+              {/* Name */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Name
@@ -185,6 +165,7 @@ const Form = () => {
                 />
               </div>
 
+              {/* Phone Number */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Phone Number
@@ -199,6 +180,7 @@ const Form = () => {
                 />
               </div>
 
+              {/* WhatsApp Number */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   WhatsApp Number
@@ -214,6 +196,7 @@ const Form = () => {
                 />
               </div>
 
+              {/* Same as Phone Number */}
               <div className="col-span-2 flex items-center">
                 <input
                   type="checkbox"
@@ -227,7 +210,7 @@ const Form = () => {
                 </label>
               </div>
 
-              {/* Additional registration fields like country, state, etc. */}
+              {/* Country, State, City */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Country
@@ -350,10 +333,8 @@ const Form = () => {
           )}
 
           {/* Submit Button */}
-          <motion.button
+          <button
             type="submit"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             disabled={loading}
             className={`col-span-1 sm:col-span-2 ${
               loading
@@ -362,9 +343,9 @@ const Form = () => {
             } text-white py-3 rounded-lg font-semibold text-sm shadow-md transition`}
           >
             {loading ? "Submitting..." : isLogin ? "Login" : "Register"}
-          </motion.button>
-        </motion.form>
-      </motion.div>
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
