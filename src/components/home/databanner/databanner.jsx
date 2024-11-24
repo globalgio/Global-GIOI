@@ -23,13 +23,13 @@ const Databanner = () => {
       countInterval = setInterval(() => {
         currentCountries += increment(10);
         currentSchools += increment(3887);
-        currentStudents += increment(500000);
-        currentTests += increment(4000000);
+        currentStudents += increment(517343);
+        currentTests += increment(4010231);
 
         if (currentCountries >= 10) currentCountries = 10;
         if (currentSchools >= 3887) currentSchools = 3887;
-        if (currentStudents >= 500000) currentStudents = 500000;
-        if (currentTests >= 4000000) currentTests = 4000000;
+        if (currentStudents >= 517343) currentStudents = 517343;
+        if (currentTests >= 4010231) currentTests = 4010231;
 
         setStats({
           countries: Math.floor(currentCountries),
@@ -41,8 +41,8 @@ const Databanner = () => {
         if (
           currentCountries === 10 &&
           currentSchools === 3887 &&
-          currentStudents === 500000 &&
-          currentTests === 4000000
+          currentStudents === 517343 &&
+          currentTests === 4010231
         ) {
           clearInterval(countInterval);
         }
@@ -52,6 +52,10 @@ const Databanner = () => {
     animateNumbers();
     return () => clearInterval(countInterval);
   }, []);
+
+  const formatNumber = (number) => {
+    return number.toLocaleString("en-IN");
+  };
 
   return (
     <section className="bg-blue-500 mt-0 py-12 relative">
@@ -69,17 +73,17 @@ const Databanner = () => {
         {/* Schools Collaborated */}
         <div className="text-center mb-6 md:mb-0">
           <h3 className="text-4xl md:text-5xl font-bold font-lato text-white">
-            {stats.schools}+
+            {formatNumber(stats.schools)}+
           </h3>
           <p className="text-xl md:text-2xl font-lato text-white mt-2">
-           Schools Have Collabrated
+            Schools Have Collaborated
           </p>
         </div>
 
         {/* Last Year Participants */}
         <div className="text-center mb-6 md:mb-0">
           <h3 className="text-4xl md:text-5xl font-bold font-lato text-white">
-            {Math.floor(stats.students / 100000)} Lakh+
+            {formatNumber(stats.students)}+
           </h3>
           <p className="text-xl md:text-2xl font-lato text-white mt-2">
             Students Joined The Adventure Last Year
@@ -89,10 +93,10 @@ const Databanner = () => {
         {/* Total Students Impacted */}
         <div className="text-center">
           <h3 className="text-4xl md:text-5xl font-bold font-montserrat text-white">
-            {Math.floor(stats.tests / 100000)} Lakhs+
+            {formatNumber(stats.tests)}+
           </h3>
           <p className="text-xl md:text-2xl font-montserrat text-white mt-2">
-            Total students impacted
+            Total Students Impacted
           </p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { FaPlay } from "react-icons/fa";
+// import { FaPlay } from "react-icons/fa";
 
 const Hero = () => {
   return (
@@ -20,13 +20,13 @@ const Hero = () => {
         </p>
 
         {/* "What is GIO" Heading */}
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black mb-4">
             Registration Video
-          </h3>
+          </h3> */}
 
           {/* YouTube Video Button with Icon in a Rectangle Box */}
-          <a
+          {/* <a
             href="https://youtu.be/YjJn99qnWoM" // Replace with your YouTube link
             target="_blank"
             rel="noopener noreferrer"
@@ -35,7 +35,7 @@ const Hero = () => {
             <FaPlay className="text-2xl mr-3 animate-pulse" />
             Tune In
           </a>
-        </div>
+        </div> */}
       </div>
 
       {/* Right Section: Image */}
@@ -48,7 +48,7 @@ const Hero = () => {
             width={750} // Set the original image width for high resolution
             height={900} // Set the original height to maintain aspect ratio
             layout="responsive"
-            className="rounded-lg object-cover shadow-lg"
+            className="rounded-lg object-cover"
           />
         </div>
       </div>

@@ -10,14 +10,18 @@ const BookNow = () => {
         {/* Left Section: Text Content */}
         <div className="md:w-3/5 text-center md:text-left mb-6 md:mb-0">
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-black">
-            Compete on a Global Stage – <br />
-            <span className="text-white">Showcase Your Skills with</span>
+            Let's Connect – <br />
+            <span className="text-white">We’re Here to Help You</span>
           </h2>
-          
-          {/* Book Now Button */}
-          <button className="mt-6 px-8 py-3 bg-green-500 text-white font-semibold text-lg rounded-full shadow-lg hover:bg-black hover:text-white transition duration-300 ease-in-out transform hover:scale-105">
-            Register Now
-          </button>
+          {/* Chat Now Button */}
+          <a
+            href="https://wa.me/919594402916" // WhatsApp link with number
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block px-8 py-3 bg-green-500 text-white font-semibold text-lg rounded-full shadow-lg hover:bg-black hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Chat Now
+          </a>
         </div>
 
         {/* Right Section: Image within Blue Container */}
@@ -31,9 +35,9 @@ const BookNow = () => {
               className="rounded-lg"
             />
             
-            {/* "Meet" Badge */}
+            {/* "Let's Chat" Badge */}
             <div className="absolute top-4 left-4 bg-white text-black px-3 py-1 rounded-full shadow-md text-sm font-semibold">
-              Meet
+              Let's Chat
             </div>
           </div>
         </div>
