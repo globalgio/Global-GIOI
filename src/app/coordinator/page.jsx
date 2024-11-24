@@ -1,7 +1,7 @@
 "use client"
 
 
-import Form from "@/components/coordinator/form";
+import Form from "@/components/coordinator/Form";
 import Footer from "@/components/layouts/footer/footer";
 import Navbar from "@/components/layouts/navbar/navbar";
 
