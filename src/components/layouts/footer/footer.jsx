@@ -61,7 +61,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="/coordinator" className="hover:underline">
-                  Coordinator
+                  Teacher Coordinator
                 </a>
               </li>
             </ul>
@@ -81,11 +81,6 @@ const Footer = () => {
                   Syllabus and Preparation
                 </a>
               </li>
-              <li>
-                <a href="/olympiad" className="hover:underline">
-                  Eligibility Criteria
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -94,7 +89,7 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-2">Follow Us</h3>
             <div className="flex space-x-4 mt-4">
               <a
-                href="https://facebook.com" // Replace with actual Facebook link
+                href="https://www.facebook.com/profile.php?id=61568632543622" // Replace with actual Facebook link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white p-2 rounded transition duration-300 transform hover:text-black hover:scale-110 shadow-lg"
@@ -102,7 +97,7 @@ const Footer = () => {
                 <FaFacebookF className="text-blue-500" />
               </a>
               <a
-                href="https://linkedin.com" // Replace with actual LinkedIn link
+                href="https://www.linkedin.com/company/global-innovator-olympiad" // Replace with actual LinkedIn link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white p-2 rounded transition duration-300 transform hover:text-black hover:scale-110 shadow-lg"
@@ -110,7 +105,7 @@ const Footer = () => {
                 <FaLinkedinIn className="text-blue-500" />
               </a>
               <a
-                href="https://instagram.com" // Replace with actual Instagram link
+                href="https://www.instagram.com/globalinnovatorolympiad/" // Replace with actual Instagram link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white p-2 rounded transition duration-300 transform hover:text-black hover:scale-110 shadow-lg"
@@ -126,7 +121,7 @@ const Footer = () => {
           <div className="flex flex-col items-center space-y-2 text-sm">
             <div className="flex space-x-4">
               <a href="/aboutus" className="hover:underline">
-                About
+                Our Story
               </a>
               <a href="/refund-policy" className="hover:underline">
                 Refund Policy
@@ -138,7 +133,7 @@ const Footer = () => {
                 Terms & Conditions
               </a>
             </div>
-            <p>© GIO All Rights Reserved. Edu Momentum LLP</p>
+            <p>© 2011-2024 GIO All Rights Reserved. Nexcore Allience LLP</p>
           </div>
         </div>
       </footer>

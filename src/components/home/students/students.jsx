@@ -6,16 +6,23 @@ const Students = () => {
     <div className="bg-blue-500 py-12 px-6 sm:px-8 lg:px-16 text-center text-white">
       {/* Title and Subtitle */}
       <div className="mb-8">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black">Students</h2>
-        <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
-          Participating <span className="text-black">Globally</span>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold">
+          Learners
+        </h2>
+        <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mt-4">
+          Engaging <span className="text-black">Worldwide</span>
         </h3>
       </div>
 
       {/* Description */}
-      <p className="text-lg sm:text-xl lg:text-2xl max-w-3xl mx-auto mb-8">
-        The Global Innovator Olympiad (GIO) features top students from over 10 countries, including <span className='text-white'><b>India, Saudi Arabia, UAE, South Africa, Norway, Nepal, USA, Qatar, and Kuwait.</b></span>
-      </p>
+      <div className="mb-8 max-w-4xl mx-auto">
+        <p className="text-lg sm:text-xl lg:text-2xl leading-relaxed">
+          The <span className="font-bold">Global Innovator Olympiad (GIO)</span> showcases excellence, bringing together outstanding learners from more than 10 nations, uniting brilliance globally. <br />
+          <span className="text-white font-extrabold">
+            India, Saudi Arabia, UAE, South Africa, Norway, Nepal, USA, Qatar, and Kuwait.
+          </span>
+        </p>
+      </div>
 
       {/* Image */}
       <div className="flex justify-center">
