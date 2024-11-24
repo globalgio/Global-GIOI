@@ -5,49 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import axios from "axios";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); // Track logged-in user state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
   const pathname = usePathname();
 
-  const toggleMenu = () => setIsOpen((prev) => !prev);
-
-  // Fetch user data from the /me endpoint
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/me`,
-        {
-          withCredentials: true, // Ensure cookies are sent
-        }
-      );
-      setUser(response.data.user); // Update the user state
-    } catch (error) {
-      console.error("Failed to fetch user:", error);
-      setUser(null); // Clear user state if not logged in
-    }
-  };
-
+  // Check if user is logged in on component mount
   useEffect(() => {
-    fetchUser(); // Fetch user on component mount
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true); // User is logged in
+    }
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/logout`,
-        {},
-        {
-          withCredentials: true, // Ensure cookies are sent
-        }
-      );
-      setUser(null); // Clear user state
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+  // Function to toggle the menu on mobile
+  const toggleMenu = () => setIsOpen((prev) => !prev);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -89,25 +62,17 @@ const Navbar = () => {
             </Link>
           ))}
 
-          {user ? (
-            <div className="flex items-center space-x-4">
-              
-              <Link
-                href="/profile"
-                className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
-              >
-                Profile
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
-              >
-                Logout
-              </button>
-            </div>
+          {/* Show Profile if user is logged in, otherwise show Register/Login */}
+          {isLoggedIn ? (
+            <Link
+              href="/profile"
+              className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+            >
+              Profile
+            </Link>
           ) : (
             <Link
-              href="/auth/login"
+              href="/gio-profile"
               className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
             >
               Register/Login
@@ -143,31 +108,18 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {user ? (
-              <div className="flex flex-col items-center space-y-2">
-                <span className="text-lg font-semibold text-gray-800">
-                  Welcome, {user.name || user.email}
-                </span>
-                <Link
-                  href="/profile"
-                  onClick={toggleMenu}
-                  className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    toggleMenu();
-                  }}
-                  className="px-4 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
-                >
-                  Logout
-                </button>
-              </div>
+            {/* Show Profile if user is logged in, otherwise show Register/Login */}
+            {isLoggedIn ? (
+              <Link
+                href="/profile"
+                onClick={toggleMenu}
+                className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+              >
+                Profile
+              </Link>
             ) : (
               <Link
-                href="/auth/login"
+                href="/gio-profile"
                 onClick={toggleMenu}
                 className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
               >
