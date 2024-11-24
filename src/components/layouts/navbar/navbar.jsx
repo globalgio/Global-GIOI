@@ -5,44 +5,64 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import axios from "axios";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); // State to track user login status
-  const pathname = usePathname(); // Get the current path
+  const [user, setUser] = useState(null); // Track logged-in user state
+  const pathname = usePathname();
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  // Fetch user data from the /me endpoint
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/me`,
+        {
+          withCredentials: true, // Ensure cookies are sent
+        }
+      );
+      setUser(response.data.user); // Update the user state
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      setUser(null); // Clear user state if not logged in
+    }
   };
 
   useEffect(() => {
-    // Simulate fetching user data (replace this with an actual API call)
-    const loggedInUser = localStorage.getItem("user");
-    if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
-    }
+    fetchUser(); // Fetch user on component mount
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/logout`,
+        {},
+        {
+          withCredentials: true, // Ensure cookies are sent
+        }
+      );
+      setUser(null); // Clear user state
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Our Story", href: "/aboutus" },
     { name: "Olympiad", href: "/olympiad" },
-    { name: "Verify Certificate", href: "/verifycertificate" }, // New page
+    { name: "Verify Certificate", href: "/verifycertificate" },
   ];
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
       <div className="container mx-auto flex items-center justify-between p-4">
-        {/* Left: Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
             <Image
-              src="/GIOLOGO.png" // Replace with the actual path to your logo image
+              src="/GIOLOGO.png"
               alt="Logo"
               width={80}
               height={80}
@@ -54,7 +74,6 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Right: Navigation Links and Button */}
         <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <Link
@@ -72,27 +91,30 @@ const Navbar = () => {
 
           {user ? (
             <div className="flex items-center space-x-4">
-              <span className="text-xl text-gray-800 font-medium">
-                Welcome, {user.name}
-              </span>
+              
+              <Link
+                href="/profile"
+                className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+              >
+                Profile
+              </Link>
               <button
                 onClick={handleLogout}
-                className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+                className="px-4 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
               >
                 Logout
               </button>
             </div>
           ) : (
             <Link
-              href="/login"
+              href="/auth/login"
               className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
             >
-              Login/Register
+              Register/Login
             </Link>
           )}
         </div>
 
-        {/* Hamburger Menu for Mobile */}
         <div className="md:hidden flex items-center">
           <button
             onClick={toggleMenu}
@@ -103,7 +125,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white shadow-md">
           <div className="flex flex-col items-center p-4 space-y-6">
@@ -124,23 +145,33 @@ const Navbar = () => {
 
             {user ? (
               <div className="flex flex-col items-center space-y-2">
-                <span className="text-xl text-gray-800 font-medium">
-                  Welcome, {user.name}
+                <span className="text-lg font-semibold text-gray-800">
+                  Welcome, {user.name || user.email}
                 </span>
-                <button
-                  onClick={handleLogout}
+                <Link
+                  href="/profile"
+                  onClick={toggleMenu}
                   className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    toggleMenu();
+                  }}
+                  className="px-4 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
                 >
                   Logout
                 </button>
               </div>
             ) : (
               <Link
-                href="/login"
+                href="/auth/login"
                 onClick={toggleMenu}
                 className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
               >
-                Login/Register
+                Register/Login
               </Link>
             )}
           </div>

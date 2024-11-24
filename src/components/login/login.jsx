@@ -1,126 +1,227 @@
-"use client";
-
 import { useState } from "react";
-import axiosInstance from "../../utils/axiosInstance"; // Adjust the path based on your project structure
-import Link from "next/link";
+import { motion } from "framer-motion";
+import { Country, State, City } from "country-state-city";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+const Form = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    country: "",
+    state: "",
+    city: "",
+    pincode: "",
+    PhoneNumber: "",
+    teacherPhoneNumber: "",
+    standard: "",
+    schoolName: "",
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
-    try {
-      const loginData = { email, password };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
 
-      const response = await axiosInstance.post("/user/login", loginData);
+    if (name === "country") {
+      const selectedCountry = Country.getAllCountries().find(
+        (country) => country.isoCode === value
+      );
+      setStates(State.getStatesOfCountry(selectedCountry?.isoCode || ""));
+      setFormData({ ...formData, country: value, state: "", city: "" });
+      setCities([]);
+    }
 
-      if (response.data.success) {
-        alert("Login successful!");
-      } else {
-        setErrorMessage(response.data.message || "Login failed!");
-      }
-    } catch (error) {
-      setErrorMessage(error.response?.data?.message || "An error occurred.");
+    if (name === "state") {
+      const selectedState = states.find((state) => state.isoCode === value);
+      setCities(
+        City.getCitiesOfState(formData.country, selectedState?.isoCode || "")
+      );
+      setFormData({ ...formData, state: value, city: "" });
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+    // Add your submission logic here
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-500">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        {/* Welcome Header */}
-        <h1 className="text-3xl font-bold text-center text-blue-600 mb-4">
-          WELCOME BACK!
-        </h1>
-        <p className="text-center text-gray-600">
-          Registration Process{" "}
-          <a
-            href="https://www.youtube.com/watch?v=your-video-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-red-500 hover:underline"
-          >
-            video
-          </a>
-        </p>
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeInOut" }}
+        className="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 sm:p-8 lg:p-10"
+      >
+        {/* Header */}
+        <motion.h1
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeInOut" }}
+          className="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-6"
+        >
+          Registration Form
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-sm sm:text-base text-center text-gray-600 mb-8"
+        >
+          Fill in your details to register for the Global Innovator Olympiad
+        </motion.p>
 
-        {/* Error Message */}
-        {errorMessage && (
-          <p className="text-red-500 text-center mt-4">{errorMessage}</p>
-        )}
+        {/* Form */}
+        <motion.form
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+        >
+          {/* Name */}
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              required
+            />
+          </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-          {/* Email Input */}
-          <div>
-            <label htmlFor="email" className="block text-lg font-semibold text-gray-700">
+          {/* Email */}
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <input
               type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email Address"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               required
             />
           </div>
 
-          {/* Password Input */}
-          <div>
-            <label htmlFor="password" className="block text-lg font-semibold text-gray-700">
-              Password
+          {/* Country */}
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Country
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <select
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               required
-            />
+            >
+              <option value="" disabled>
+                Select Country
+              </option>
+              {Country.getAllCountries().map((country) => (
+                <option key={country.isoCode} value={country.isoCode}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            className="w-full bg-red-500 text-white font-semibold text-lg px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
-          >
-            Login
-          </button>
-        </form>
+          {/* State */}
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              State
+            </label>
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              required
+            >
+              <option value="" disabled>
+                Select State
+              </option>
+              {states.map((state) => (
+                <option key={state.isoCode} value={state.isoCode}>
+                  {state.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {/* Additional Links */}
-        <div className="text-center mt-6">
-          <Link
-            href="/resend-verification"
-            className="text-blue-600 hover:underline font-semibold"
+          {/* City */}
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              City
+            </label>
+            <select
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              required
+            >
+              <option value="" disabled>
+                Select City
+              </option>
+              {cities.map((city) => (
+                <option key={city.name} value={city.name}>
+                  {city.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Remaining fields */}
+          {[
+            "pincode",
+            "PhoneNumber",
+            "teacherPhoneNumber",
+            "standard",
+            "schoolName",
+          ].map((field) => (
+            <div key={field} className="col-span-1">
+              <label
+                htmlFor={field}
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {field
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/^\w/, (c) => c.toUpperCase())}
+              </label>
+              <input
+                type="text"
+                id={field}
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                required
+              />
+            </div>
+          ))}
+
+          {/* Submit Button */}
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="col-span-1 sm:col-span-2 bg-blue-500 text-white py-3 rounded-lg font-semibold text-sm shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
           >
-            Resend Email Verification
-          </Link>
-        </div>
-        <div className="text-center mt-4">
-          <Link
-            href="/registration"
-            className="text-blue-600 hover:underline font-bold"
-          >
-            Create a new account
-          </Link>{" "}
-          |{" "}
-          <Link
-            href="/forgot-password"
-            className="text-blue-600 hover:underline font-bold"
-          >
-            Forgot password?
-          </Link>
-        </div>
-      </div>
+            Submit
+          </motion.button>
+        </motion.form>
+      </motion.div>
     </div>
   );
 };
 
-export default Login;
+export default Form;
