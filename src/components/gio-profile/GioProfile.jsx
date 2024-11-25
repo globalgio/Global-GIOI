@@ -28,7 +28,7 @@ const SimpleForm = () => {
     if (token) {
       // Fetch user profile from the backend
       axios
-        .get(`${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/gio-profile`, {
+        .get(`${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

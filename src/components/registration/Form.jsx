@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Country, State, City } from "country-state-city";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -26,7 +25,9 @@ const Form = () => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(false); // Track if we are in login or register mode
+  const [isLogin, setIsLogin] = useState(false); // Toggle between login and registration
+  const [forgotPassword, setForgotPassword] = useState(false); // Manage forgot password modal
+  const [resetEmail, setResetEmail] = useState(""); // Store email for password reset
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -72,15 +73,14 @@ const Form = () => {
         : `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/register`;
 
       const response = await axios.post(url, formData);
-      const userData = response.data.user;
 
       // Store the token in localStorage
       localStorage.setItem("token", response.data.token);
 
       toast.success(`${isLogin ? "Login" : "Registration"} successful!`);
 
-      // Redirect or show feedback after successful registration/login
-      window.location.href = "/profile"; // Redirect to profile page (or homepage)
+      // Redirect after successful registration/login
+      window.location.href = "/profile";
     } catch (error) {
       console.error(`${isLogin ? "Login" : "Registration"} failed:`, error);
       toast.error(
@@ -91,10 +91,40 @@ const Form = () => {
     }
   };
 
+  // const handleForgotPassword = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   if (!resetEmail) {
+  //     toast.error("Please enter a valid email address.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/reset-password`,
+  //       { email: resetEmail }
+  //     );
+  //     toast.success(
+  //       response.data.message || "Password reset link sent to your email!"
+  //     );
+  //     setForgotPassword(false); // Close modal
+  //   } catch (error) {
+  //     console.error("Forgot password failed:", error);
+  //     toast.error(
+  //       error.response?.data?.message ||
+  //         "Failed to send reset link. Please try again."
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <ToastContainer position="top-right" autoClose={3000} />
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 sm:p-8 lg:p-10">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl p-6 sm:p-8 lg:p-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-6">
           {isLogin ? "Login" : "Registration"} Form
         </h1>
@@ -110,13 +140,21 @@ const Form = () => {
           </button>
         </div>
 
-        <p className="text-sm sm:text-base text-center text-gray-600 mb-8">
-          {isLogin
-            ? "Please enter your credentials to login"
-            : "Fill in your details to register for the Global Innovator Olympiad"}
-        </p>
+        {isLogin && (
+          <div className="text-center mb-6">
+            <button
+              onClick={() => setForgotPassword(true)}
+              className="text-sm text-blue-500 hover:underline"
+            >
+              Forgot Password?
+            </button>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 w-full">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {/* Email */}
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -147,7 +185,7 @@ const Form = () => {
             />
           </div>
 
-          {/* Registration-specific fields */}
+          {/* Registration fields */}
           {!isLogin && (
             <>
               {/* Name */}
@@ -197,7 +235,7 @@ const Form = () => {
               </div>
 
               {/* Same as Phone Number */}
-              <div className="col-span-2 flex items-center">
+              <div className="col-span-1 flex items-center">
                 <input
                   type="checkbox"
                   name="sameAsPhone"
@@ -210,7 +248,7 @@ const Form = () => {
                 </label>
               </div>
 
-              {/* Country, State, City */}
+              {/* Country */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Country
@@ -233,6 +271,7 @@ const Form = () => {
                 </select>
               </div>
 
+              {/* State */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   State
@@ -255,6 +294,7 @@ const Form = () => {
                 </select>
               </div>
 
+              {/* City */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   City
@@ -333,19 +373,57 @@ const Form = () => {
           )}
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`col-span-1 sm:col-span-2 ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
-            } text-white py-3 rounded-lg font-semibold text-sm shadow-md transition`}
-          >
-            {loading ? "Submitting..." : isLogin ? "Login" : "Register"}
-          </button>
+          <div className="col-span-full">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 rounded-lg font-semibold text-sm shadow-md transition ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
+              }`}
+            >
+              {loading ? "Submitting..." : isLogin ? "Login" : "Register"}
+            </button>
+          </div>
         </form>
       </div>
+
+      {/* Forgot Password Modal */}
+      {/* {forgotPassword && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-2xl font-bold text-center text-blue-700 mb-4">
+              Forgot Password
+            </h2>
+            <form onSubmit={handleForgotPassword}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter your email
+              </label>
+              <input
+                type="email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "Send Reset Link"}
+              </button>
+            </form>
+            <button
+              onClick={() => setForgotPassword(false)}
+              className="w-full mt-4 text-center text-blue-500 hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

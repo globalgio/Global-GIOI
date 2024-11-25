@@ -1,54 +1,99 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 
-const Instructions = () => {
+const Page = () => {
   return (
-    <div className="container mx-auto mt-10 px-6">
-      <h2 className="text-center text-3xl font-bold mb-8 text-[#0D1028]">
-        📚 GIO Mock Test Instructions
-      </h2>
+    <div className="min-h-screen bg-white flex items-center justify-center px-6 py-10">
+      <div className="max-w-4xl w-full bg-[#F9FAFB] p-8 rounded-lg shadow-md">
+        {/* Header */}
+        <h2 className="text-center text-3xl font-extrabold text-[#2563EB] mb-6">
+          📚 GIO Mock Test Instructions
+        </h2>
 
-      <div className="bg-[#E3F2FD] p-6 rounded-lg shadow-lg">
         {/* Exam Overview */}
-        <h3 className="text-xl font-semibold text-[#0D1028] mb-4">1. 🖍 Exam Overview:</h3>
-        <ul className="list-none space-y-2 text-[#0D1028] text-lg">
-          <li>• The mock test consists of 25 questions designed to help you prepare for the Global Innovation Olympiad (GIO).</li>
-          <li>• This test is free of charge and is intended for practice purposes only.</li>
-          <li>• Each question is formatted as a multiple-choice question (MCQ) with four options to choose from.</li>
-        </ul>
+        <div className="mb-8">
+          <h3 className="text-2xl font-semibold text-[#2563EB] mb-4">
+            1. 🖍 Exam Overview
+          </h3>
+          <ul className="list-disc pl-6 text-lg text-gray-700 space-y-2">
+            <li>
+              The mock test consists of 25 questions designed to help you
+              prepare for the Global Innovation Olympiad (GIO).
+            </li>
+            <li>
+              This test is free of charge and is intended for practice purposes
+              only.
+            </li>
+            <li>
+              Each question is formatted as a multiple-choice question (MCQ)
+              with four options to choose from.
+            </li>
+          </ul>
+        </div>
 
         {/* Exam Rules */}
-        <h3 className="text-xl font-semibold text-[#0D1028] mt-8 mb-4">2. ⚖️ Exam Rules:</h3>
-        <ul className="list-none space-y-2 text-[#0D1028] text-lg">
-          <li>• Marking Scheme: +4 marks for correct answers, -1 mark for incorrect answers. ❗</li>
-          <li>• ⏰ Time Limit: You will have 45 seconds per question to complete your responses.</li>
-          <li>• 📊 Score Tracking: Your highest score will be recorded and compared to your previous attempts.</li>
-        </ul>
+        <div className="mb-8">
+          <h3 className="text-2xl font-semibold text-[#2563EB] mb-4">
+            2. ⚖️ Exam Rules
+          </h3>
+          <ul className="list-disc pl-6 text-lg text-gray-700 space-y-2">
+            <li>
+              <strong>Marking Scheme:</strong> +4 marks for correct answers, -1
+              mark for incorrect answers. ❗
+            </li>
+            <li>
+              <strong>⏰ Time Limit:</strong> You will have 45 seconds per
+              question to complete your responses.
+            </li>
+            <li>
+              <strong>📊 Score Tracking:</strong> Your highest score will be
+              recorded and compared to your previous attempts.
+            </li>
+          </ul>
+        </div>
 
         {/* Window Restrictions */}
-        <h3 className="text-xl font-semibold text-[#0D1028] mt-8 mb-4">3. 🚫 Window Restrictions:</h3>
-        <p className="text-[#0D1028] text-lg">
-          While this is a practice test, we encourage you to simulate the exam environment. Try to stay focused and avoid navigating away from the test screen.
-        </p>
+        <div className="mb-8">
+          <h3 className="text-2xl font-semibold text-[#2563EB] mb-4">
+            3. 🚫 Window Restrictions
+          </h3>
+          <p className="text-lg text-gray-700">
+            While this is a practice test, we encourage you to simulate the exam
+            environment. Try to stay focused and avoid navigating away from the
+            test screen.
+          </p>
+        </div>
 
         {/* Monitoring */}
-        <h3 className="text-xl font-semibold text-[#0D1028] mt-8 mb-4">4. 👀 Monitoring:</h3>
-        <p className="text-[#0D1028] text-lg">
-          Ensure that you are in a distraction-free environment to mimic the real testing conditions and maintain focus throughout the test.
-        </p>
+        <div className="mb-8">
+          <h3 className="text-2xl font-semibold text-[#2563EB] mb-4">
+            4. 👀 Monitoring
+          </h3>
+          <p className="text-lg text-gray-700">
+            Ensure that you are in a distraction-free environment to mimic the
+            real testing conditions and maintain focus throughout the test.
+          </p>
+        </div>
 
         {/* Additional Notes */}
-        <h3 className="text-xl font-semibold text-[#0D1028] mt-8 mb-4">5. 🌐 Additional Notes:</h3>
-        <ul className="list-none space-y-2 text-[#0D1028] text-lg">
-          <li>• Ensure you have a stable internet connection.</li>
-          <li>• Use a desktop or laptop for the best experience.</li>
-          <li>• We recommend disabling pop-up blockers to avoid interruptions during the test.</li>
-        </ul>
+        <div className="mb-8">
+          <h3 className="text-2xl font-semibold text-[#2563EB] mb-4">
+            5. 🌐 Additional Notes
+          </h3>
+          <ul className="list-disc pl-6 text-lg text-gray-700 space-y-2">
+            <li>Ensure you have a stable internet connection.</li>
+            <li>Use a desktop or laptop for the best experience.</li>
+            <li>
+              We recommend disabling pop-up blockers to avoid interruptions
+              during the test.
+            </li>
+          </ul>
+        </div>
 
         {/* Start Mock Test Button */}
-        <div className="text-center mt-10">
+        <div className="text-center">
           <Link href="/gio-event/quiz">
-            <span className="bg-[#3B82F6] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#2563EB] transition duration-300 inline-block text-lg font-semibold">
+            <span className="bg-[#2563EB] text-white px-6 py-3 rounded-md shadow-md text-lg font-semibold hover:bg-[#1D4ED8] transition duration-300">
               Start Mock Test
             </span>
           </Link>
@@ -58,4 +103,4 @@ const Instructions = () => {
   );
 };
 
-export default Instructions;
+export default Page;

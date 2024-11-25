@@ -1,10 +1,11 @@
-import Quiz from "@/components/quiz/Quiz";
+import PaidQuiz from "@/components/quiz/PaidQuiz";
+
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <Quiz />
+      <PaidQuiz />
     </div>
   );
 };
