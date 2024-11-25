@@ -68,8 +68,8 @@ const Form = () => {
     setLoading(true);
     try {
       const url = isLogin
-        ? `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/login`
-        : `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/auth/register`;
+        ? `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/login`
+        : `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/register`;
 
       const response = await axios.post(url, formData);
       const userData = response.data.user;
