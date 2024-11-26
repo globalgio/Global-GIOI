@@ -134,9 +134,8 @@ const Quiz = () => {
     setSelectedAnswers(updatedAnswers);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     let score = 0;
-
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.answer) {
         score += 4; // +4 for correct answers
@@ -147,47 +146,19 @@ const Quiz = () => {
 
     const percentageScore = ((score / (questions.length * 4)) * 100).toFixed(0);
 
-    try {
-      const token = localStorage.getItem("token");
+    // Save quiz results to localStorage
+    localStorage.setItem(
+      "quizResult",
+      JSON.stringify({
+        score,
+        total: questions.length * 4,
+        percentage: percentageScore,
+        questions,
+        selectedAnswers,
+      })
+    );
 
-      if (!token) {
-        throw new Error("User is not authenticated.");
-      }
-
-      // Send the score to the backend
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Include the user's token
-          },
-          body: JSON.stringify({
-            score: score,
-            total: questions.length * 4,
-            percentage: percentageScore,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to save quiz marks.");
-      }
-
-      console.log("Quiz marks saved successfully.");
-    } catch (error) {
-      console.error("Error saving quiz marks:", error.message);
-    }
-
-    const queryString = new URLSearchParams({
-      score: percentageScore,
-      total: questions.length * 4,
-      questions: JSON.stringify(questions),
-      selectedAnswers: JSON.stringify(selectedAnswers),
-    }).toString();
-
-    router.push(`/gio-event/results?${queryString}`);
+    router.push(`/gio-event/results`);
   };
 
   if (error) {
@@ -235,7 +206,7 @@ const Quiz = () => {
         <motion.div className="relative w-full h-4 mt-4 rounded-full bg-gray-300 overflow-hidden shadow-md">
           <motion.div
             initial={{ width: "100%" }}
-            animate={{ width: `${(timeLeft / 45) * 100}%` }} // Fixed the syntax error here
+            animate={{ width: `${(timeLeft / 45) * 100}%` }}
             transition={{ duration: 1 }}
             className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300"
           />

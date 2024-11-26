@@ -12,18 +12,19 @@ const PaidQuiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [error, setError] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(45); // Timer for 45 seconds
-  const [isPaused, setIsPaused] = useState(false); // Pause state
-  const [warning, setWarning] = useState(false); // Warning state
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [isPaused, setIsPaused] = useState(false);
+  const [warning, setWarning] = useState(false);
 
+  // Handle moving to the next question
   const handleNext = useCallback(() => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
-      setTimeLeft(45); // Reset timer for next question
+      setTimeLeft(45); // Reset timer for the next question
     }
   }, [currentQuestion, questions.length]);
 
-  // Enter full-screen mode (only user-initiated)
+  // Enter full-screen mode
   const enterFullScreen = () => {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
@@ -33,13 +34,13 @@ const PaidQuiz = () => {
     }
   };
 
+  // Detect window switching or exiting fullscreen
   useEffect(() => {
-    // Detect if user exits full-screen or switches windows
     const handleFullScreenChange = () => {
       if (!document.fullscreenElement) {
         setWarning(true);
         setIsPaused(true);
-        handleNext();
+        handleNext(); // Skip the question
       }
     };
 
@@ -47,7 +48,7 @@ const PaidQuiz = () => {
       if (document.visibilityState === "hidden") {
         setWarning(true);
         setIsPaused(true);
-        handleNext();
+        handleNext(); // Skip the question
       }
     };
 
@@ -60,12 +61,14 @@ const PaidQuiz = () => {
     };
   }, [handleNext]);
 
+  // Fetch user profile and validate payment and test completion
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const validateUser = async () => {
       const token = localStorage.getItem("token");
 
       if (!token) {
         setError("User is not logged in.");
+        router.push("/gio-event/login");
         return;
       }
 
@@ -87,7 +90,27 @@ const PaidQuiz = () => {
         const data = await response.json();
         setUserProfile(data.user);
 
-        const rawStandard = data.user.standard;
+        const { paymentStatus, testCompleted } = data.user;
+
+        if (paymentStatus !== "paid_but_not_attempted" || testCompleted) {
+          router.push("/gio-event/paid-quiz");
+        }
+      } catch (err) {
+        console.error("Error validating user:", err.message);
+        router.push("/payment");
+      }
+    };
+
+    validateUser();
+  }, [router]);
+
+  // Fetch questions based on user's standard
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      if (!userProfile) return;
+
+      try {
+        const rawStandard = userProfile.standard;
         const standard = rawStandard.replace(/th$/, "");
 
         const distribution = questionDistributions[standard]?.subjects;
@@ -98,7 +121,7 @@ const PaidQuiz = () => {
         }
 
         const allQuestions = [];
-        const totalQuestions = 100; // Total questions for paid quiz
+        const totalQuestions = 100;
         let remainingQuestions = totalQuestions;
 
         for (const [subject, percentage] of Object.entries(distribution)) {
@@ -115,7 +138,6 @@ const PaidQuiz = () => {
           remainingQuestions -= subjectCount;
         }
 
-        // Handle any remaining questions
         if (remainingQuestions > 0) {
           const extraQuestions = allQuestions
             .sort(() => 0.5 - Math.random())
@@ -129,15 +151,16 @@ const PaidQuiz = () => {
       }
     };
 
-    fetchUserProfile();
-  }, []);
+    fetchQuestions();
+  }, [userProfile]);
 
+  // Timer logic
   useEffect(() => {
     if (timeLeft > 0 && !isPaused) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0) {
-      handleNext(); // Automatically skip question when timer ends
+      handleNext();
     }
   }, [timeLeft, isPaused, handleNext]);
 
@@ -147,7 +170,7 @@ const PaidQuiz = () => {
     setSelectedAnswers(updatedAnswers);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     let score = 0;
 
     questions.forEach((question, index) => {
@@ -160,47 +183,19 @@ const PaidQuiz = () => {
 
     const percentageScore = ((score / (questions.length * 4)) * 100).toFixed(0);
 
-    try {
-      const token = localStorage.getItem("token");
+    // Save quiz results to localStorage
+    localStorage.setItem(
+      "paidQuizResult",
+      JSON.stringify({
+        score,
+        total: questions.length * 4,
+        percentage: percentageScore,
+        questions,
+        selectedAnswers,
+      })
+    );
 
-      if (!token) {
-        throw new Error("User is not authenticated.");
-      }
-
-      // Send the score to the backend
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Include the user's token
-          },
-          body: JSON.stringify({
-            score: score,
-            total: questions.length * 4,
-            percentage: percentageScore,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to save quiz marks.");
-      }
-
-      console.log("Quiz marks saved successfully.");
-    } catch (error) {
-      console.error("Error saving quiz marks:", error.message);
-    }
-
-    const queryString = new URLSearchParams({
-      score: percentageScore,
-      total: questions.length * 4,
-      questions: JSON.stringify(questions),
-      selectedAnswers: JSON.stringify(selectedAnswers),
-    }).toString();
-
-    router.push(`/gio-event/results?${queryString}`);
+    router.push(`/gio-event/results`); // Change the route for the paid results page
   };
 
   if (error) {

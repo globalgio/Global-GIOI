@@ -11,6 +11,7 @@ const Form = () => {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "", // New field for confirming password
     country: "",
     state: "",
     city: "",
@@ -26,8 +27,7 @@ const Form = () => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false); // Toggle between login and registration
-  const [forgotPassword, setForgotPassword] = useState(false); // Manage forgot password modal
-  const [resetEmail, setResetEmail] = useState(""); // Store email for password reset
+  const [passwordError, setPasswordError] = useState(""); // To store password validation error
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -66,7 +66,25 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isLogin) {
+      // Validate email and password for login
+      if (!formData.email || !formData.password) {
+        toast.error("Email and password are required for login.");
+        return;
+      }
+    } else {
+      // Validate registration-specific fields
+      if (formData.password !== formData.confirmPassword) {
+        setPasswordError("Passwords do not match.");
+        toast.error("Passwords do not match.");
+        return;
+      }
+      setPasswordError("");
+    }
+
     setLoading(true);
+
     try {
       const url = isLogin
         ? `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/login`
@@ -79,47 +97,25 @@ const Form = () => {
 
       toast.success(`${isLogin ? "Login" : "Registration"} successful!`);
 
-      // Redirect after successful registration/login
+      // Redirect to profile after successful login/registration
       window.location.href = "/profile";
     } catch (error) {
+      // Error handling for login or registration
       console.error(`${isLogin ? "Login" : "Registration"} failed:`, error);
-      toast.error(
-        `${isLogin ? "Login" : "Registration"} failed. Please try again.`
-      );
+
+      if (error.response && error.response.data.message) {
+        // Show error message returned by backend
+        toast.error(error.response.data.message);
+      } else {
+        // Show generic error message
+        toast.error(
+          `${isLogin ? "Login" : "Registration"} failed. Please try again.`
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
-
-  // const handleForgotPassword = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   if (!resetEmail) {
-  //     toast.error("Please enter a valid email address.");
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/reset-password`,
-  //       { email: resetEmail }
-  //     );
-  //     toast.success(
-  //       response.data.message || "Password reset link sent to your email!"
-  //     );
-  //     setForgotPassword(false); // Close modal
-  //   } catch (error) {
-  //     console.error("Forgot password failed:", error);
-  //     toast.error(
-  //       error.response?.data?.message ||
-  //         "Failed to send reset link. Please try again."
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -139,17 +135,6 @@ const Form = () => {
               : "Already have an account? Login"}
           </button>
         </div>
-
-        {isLogin && (
-          <div className="text-center mb-6">
-            <button
-              onClick={() => setForgotPassword(true)}
-              className="text-sm text-blue-500 hover:underline"
-            >
-              Forgot Password?
-            </button>
-          </div>
-        )}
 
         <form
           onSubmit={handleSubmit}
@@ -185,6 +170,25 @@ const Form = () => {
             />
           </div>
 
+          {/* Confirm Password */}
+          {!isLogin && (
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                required
+              />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              )}
+            </div>
+          )}
           {/* Registration fields */}
           {!isLogin && (
             <>

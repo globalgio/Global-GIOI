@@ -88,19 +88,30 @@ const PaymentPage = () => {
         name: "Global Innovator Olympiad",
         description: "Secure Payment",
         order_id: orderId,
-        handler: function (response) {
+        handler: async function (response) {
           toast.success("Payment Successful!");
-          console.log("Payment Response:", response);
-          router.push("/gio-event/paid-quiz"); // Redirect to paid-instruction page
+          try {
+            // Update the user's payment status
+            const token = localStorage.getItem("token");
+            await axios.patch(
+              `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
+              { paymentStatus: "paid_but_not_attempted" },
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            router.push("/gio-event/paid-quiz"); // Redirect to the quiz
+          } catch (error) {
+            console.error("Error updating payment status:", error);
+            toast.error("Failed to update payment status. Please try again.");
+          }
         },
         prefill: {
-          name: userProfile.name, // Prefill with user name
-          email: userProfile.email, // Prefill with user email
-          contact: userProfile.contact || "9999999999", // Prefill with user contact
+          name: userProfile.name,
+          email: userProfile.email,
+          contact: userProfile.contact || "9999999999",
         },
-        theme: {
-          color: "#2563eb",
-        },
+        theme: { color: "#2563eb" },
       };
 
       const razorpay = new window.Razorpay(options);

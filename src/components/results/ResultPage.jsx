@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import jsPDF from "jspdf";
 
 const Results = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
   const [questions, setQuestions] = useState([]);
@@ -15,23 +14,27 @@ const Results = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Ensure searchParams are handled only in client-side rendering
-    const scoreParam = parseInt(searchParams?.get("score"), 10) || 0;
-    const totalParam = parseInt(searchParams?.get("total"), 10) || 0;
-    const questionsParam = JSON.parse(searchParams?.get("questions") || "[]");
-    const selectedAnswersParam = JSON.parse(
-      searchParams?.get("selectedAnswers") || "[]"
+    // Retrieve paid quiz or normal quiz result data from localStorage
+    const paidQuizResult = JSON.parse(
+      localStorage.getItem("paidQuizResult") || "{}"
+    );
+    const normalQuizResult = JSON.parse(
+      localStorage.getItem("quizResult") || "{}"
     );
 
-    setScore(scoreParam);
-    setTotal(totalParam);
-    setQuestions(questionsParam);
-    setSelectedAnswers(selectedAnswersParam);
+    const quizResult = Object.keys(paidQuizResult).length
+      ? paidQuizResult
+      : normalQuizResult;
+
+    setScore(quizResult.score || 0);
+    setTotal(quizResult.total || 0);
+    setQuestions(quizResult.questions || []);
+    setSelectedAnswers(quizResult.selectedAnswers || []);
 
     // Simulate progress animation
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev < scoreParam) {
+        if (prev < quizResult.score) {
           return prev + 1;
         } else {
           clearInterval(interval);
@@ -41,7 +44,54 @@ const Results = () => {
     }, 20);
 
     return () => clearInterval(interval);
-  }, [searchParams]);
+  }, []);
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.text("Quiz Results", 10, 10);
+
+    // Score Summary
+    doc.setFontSize(14);
+    doc.text(`Score: ${score} out of ${total}`, 10, 20);
+    doc.text(`Percentage: ${((score / total) * 100).toFixed(2)}%`, 10, 30);
+
+    // Question Analysis
+    doc.setFontSize(12);
+    let yPosition = 40; // Starting position for content
+    questions.forEach((question, index) => {
+      doc.text(`Q${index + 1}: ${question.question}`, 10, yPosition);
+      yPosition += 10;
+
+      // Correct Answer
+      doc.text(`Correct Answer: ${question.answer}`, 20, yPosition);
+      yPosition += 10;
+
+      // Your Answer
+      const userAnswer = selectedAnswers[index] || "Not Answered";
+      doc.text(`Your Answer: ${userAnswer}`, 20, yPosition);
+
+      // Highlight if wrong
+      if (userAnswer !== question.answer) {
+        doc.text("Status: Incorrect", 20, yPosition + 10);
+      } else {
+        doc.text("Status: Correct", 20, yPosition + 10);
+      }
+
+      yPosition += 20; // Space between questions
+
+      // Add a new page if content exceeds page height
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 10;
+      }
+    });
+
+    // Save the PDF
+    doc.save("quiz-results.pdf");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#E3F2FD] to-white flex flex-col items-center py-10 px-6">
@@ -105,6 +155,14 @@ const Results = () => {
           ))}
         </div>
       </div>
+
+      {/* Download PDF Button */}
+      <button
+        onClick={downloadPDF}
+        className="px-6 py-3 bg-[#4CAF50] text-white rounded-lg shadow mt-8 hover:bg-[#45A049] transition transform hover:scale-105"
+      >
+        Download Results as PDF
+      </button>
 
       {/* Action Buttons */}
       <div className="flex space-x-6 mt-10">
