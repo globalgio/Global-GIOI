@@ -18,7 +18,7 @@ import Link from "next/link";
 
 const Profile = () => {
   const [data, setData] = useState(null);
-  const [rankings, setRankings] = useState(null);
+  const [rankings, setRankings] = useState({ mock: {}, live: {} });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -31,10 +31,21 @@ const Profile = () => {
           return;
         }
 
-        // Fetch both user data and rankings in parallel
-        const [userResponse, rankingsResponse] = await Promise.all([
+        // Fetch user profile
+        const userResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setData(userResponse.data.user);
+
+        // Fetch mock and live rankings
+        const [mockRankingsResponse, liveRankingsResponse] = await Promise.all([
           axios.get(
-            `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`,
+            `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/get-rank?type=mock`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -42,7 +53,7 @@ const Profile = () => {
             }
           ),
           axios.get(
-            `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/get-rank`,
+            `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/get-rank?type=live`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -51,10 +62,12 @@ const Profile = () => {
           ),
         ]);
 
-        setData(userResponse.data.user);
-        setRankings(rankingsResponse.data.rankings);
+        setRankings({
+          mock: mockRankingsResponse.data.rankings,
+          live: liveRankingsResponse.data.rankings,
+        });
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        console.error("Error fetching data:", err);
         router.push("/gio-profile");
       } finally {
         setLoading(false);
@@ -102,7 +115,7 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        <p className="text-gray-600 mt-2">Give Live Test for Ranks!</p>
+        <p className="text-gray-600 mt-2">No Ranking Available!</p>
       )}
     </div>
   );
@@ -117,7 +130,7 @@ const Profile = () => {
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold">
-                  Global Innovation Olympiad
+                  Global Innovator Olympiad
                 </h1>
                 <p className="text-lg mt-2 font-bold">{data.name}</p>
                 <p className="text-lg mt-2">Student</p>
@@ -219,15 +232,31 @@ const Profile = () => {
             </div>
 
             {/* Rankings Section */}
-            <div className="mt-10">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Rankings
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {renderRanking("Global Ranking", rankings?.global)}
-                {renderRanking("Country Ranking", rankings?.country)}
-                {renderRanking("State Ranking", rankings?.state)}
-                {renderRanking("City Ranking", rankings?.city)}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+              {/* Mock Test Rankings */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Mock Test Rankings
+                </h3>
+                <div className="space-y-4">
+                  {renderRanking("Global Mock Ranking", rankings.mock.global)}
+                  {renderRanking("Country Mock Ranking", rankings.mock.country)}
+                  {renderRanking("State Mock Ranking", rankings.mock.state)}
+                  {renderRanking("City Mock Ranking", rankings.mock.city)}
+                </div>
+              </div>
+
+              {/* Live Test Rankings */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Live Test Rankings
+                </h3>
+                <div className="space-y-4">
+                  {renderRanking("Global Live Ranking", rankings.live.global)}
+                  {renderRanking("Country Live Ranking", rankings.live.country)}
+                  {renderRanking("State Live Ranking", rankings.live.state)}
+                  {renderRanking("City Live Ranking", rankings.live.city)}
+                </div>
               </div>
             </div>
 
