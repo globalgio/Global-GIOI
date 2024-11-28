@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Form = () => {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    username: "",
     password: "",
     confirmPassword: "", // New field for confirming password
     country: "",
@@ -68,9 +68,9 @@ const Form = () => {
     e.preventDefault();
 
     if (isLogin) {
-      // Validate email and password for login
-      if (!formData.email || !formData.password) {
-        toast.error("Email and password are required for login.");
+      // Validate username and password for login
+      if (!formData.username || !formData.password) {
+        toast.error("username and password are required for login.");
         return;
       }
     } else {
@@ -140,15 +140,15 @@ const Form = () => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {/* Email */}
+          {/* username */}
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+              username
             </label>
             <input
-              type="email"
-              name="email"
-              value={formData.email}
+              type="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               required
@@ -402,12 +402,12 @@ const Form = () => {
             </h2>
             <form onSubmit={handleForgotPassword}>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter your email
+                Enter your username
               </label>
               <input
-                type="email"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
+                type="username"
+                value={resetusername}
+                onChange={(e) => setResetusername(e.target.value)}
                 className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 required
               />
