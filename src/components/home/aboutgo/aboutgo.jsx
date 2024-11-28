@@ -25,7 +25,7 @@ const AboutGO = () => {
       <div className="md:w-1/2 w-full px-4 text-gray-700 flex flex-col justify-center items-center md:items-start">
         <p className="text-lg sm:text-xl lg:text-4xl leading-relaxed text-center md:text-left">
         
-Top performers gain global recognition, with the top 25 schools featured in major publications. Join GIO to inspire innovation and showcase your school’s excellence.
+Top performers gain global recognition, with the top 50 schools featured in major publications. Join GIO to inspire innovation and showcase your school’s excellence.
         </p>
       </div>
     </div>
