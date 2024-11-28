@@ -1,6 +1,7 @@
 
 
 // Importing components
+import Cursor from "@/components/cursor/Cursor";
 import Hero from "@/components/home/Hero/hero";
 import AboutGO from "@/components/home/aboutgo/aboutgo";
 import BookNow from "@/components/home/booknow/booknow";
@@ -14,6 +15,7 @@ const Page = () => {
   
   return (
     <div>
+      <Cursor/>
       <Navbar />
       <Hero />
       <AboutGO />

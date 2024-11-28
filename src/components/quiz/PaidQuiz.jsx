@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -63,11 +63,10 @@ const PaidQuiz = () => {
 
   // Fetch user profile and validate payment and test completion
   useEffect(() => {
-    const validateUser = async () => {
+    const validateUserAccess = async () => {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        setError("User is not logged in.");
         router.push("/gio-event/login");
         return;
       }
@@ -88,20 +87,24 @@ const PaidQuiz = () => {
         }
 
         const data = await response.json();
-        setUserProfile(data.user);
-
         const { paymentStatus, testCompleted } = data.user;
 
-        if (paymentStatus !== "paid_but_not_attempted" || testCompleted) {
-          router.push("/gio-event/paid-quiz");
+        // Redirect logic based on payment status and test completion
+        if (paymentStatus !== "paid_but_not_attempted") {
+          router.push("/payment"); // Redirect to payment if not paid
+        } else if (testCompleted) {
+          router.push("/payment"); // Redirect to payment if test is already completed
+        } else {
+          setUserProfile(data.user); // Allow access if everything is valid
         }
       } catch (err) {
-        console.error("Error validating user:", err.message);
-        router.push("/payment");
+        console.error(err.message);
+        setError(err.message);
+        router.push("/gio-event/login");
       }
     };
 
-    validateUser();
+    validateUserAccess();
   }, [router]);
 
   // Fetch questions based on user's standard
@@ -170,6 +173,39 @@ const PaidQuiz = () => {
     setSelectedAnswers(updatedAnswers);
   };
 
+  const saveLiveResults = async (score, total) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("User is not logged in.");
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            score,
+            total,
+            type: "live", // Distinguish between mock and live test
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save live quiz results.");
+      }
+
+      console.log("Live quiz results saved successfully.");
+    } catch (err) {
+      console.error("Error saving live quiz results:", err.message);
+    }
+  };
+
   const handleSubmit = () => {
     let score = 0;
 
@@ -181,21 +217,24 @@ const PaidQuiz = () => {
       }
     });
 
-    const percentageScore = ((score / (questions.length * 4)) * 100).toFixed(0);
+    const total = questions.length * 4;
 
-    // Save quiz results to localStorage
+    saveLiveResults(score, total); // Save results to backend
+
+    const percentageScore = ((score / total) * 100).toFixed(0);
+
     localStorage.setItem(
       "paidQuizResult",
       JSON.stringify({
         score,
-        total: questions.length * 4,
+        total,
         percentage: percentageScore,
         questions,
         selectedAnswers,
       })
     );
 
-    router.push(`/gio-event/results`); // Change the route for the paid results page
+    router.push(`/gio-event/results`);
   };
 
   if (error) {
@@ -234,8 +273,19 @@ const PaidQuiz = () => {
       )}
 
       <div className="w-full max-w-4xl bg-white p-6 rounded-md shadow-md">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-[#2563EB]">Paid Quiz</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-center">
+          <div className="flex items-center mb-4 sm:mb-0">
+            <Image
+              src="/GIOLOGO.png"
+              alt="QUIZ LOGO"
+              width={48}
+              height={48}
+              className="h-12 w-12 mr-4"
+            />
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#2563EB] text-center sm:text-left">
+              GLOBAL INNOVATOR OLYMPIAD
+            </h1>
+          </div>
           <div className="flex items-center">
             <span className="text-[#FF2D55] font-semibold">{timeLeft}s</span>
           </div>

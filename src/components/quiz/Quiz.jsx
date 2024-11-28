@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -134,7 +134,37 @@ const Quiz = () => {
     setSelectedAnswers(updatedAnswers);
   };
 
-  const handleSubmit = () => {
+  const saveMockResults = async (score, total) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("User is not logged in.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ score, total, type: "mock" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save mock test results.");
+      }
+
+      console.log("Mock test results saved successfully.");
+    } catch (err) {
+      console.error("Error saving mock test results:", err);
+    }
+  };
+
+  const handleSubmit = async () => {
     let score = 0;
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.answer) {
@@ -157,6 +187,9 @@ const Quiz = () => {
         selectedAnswers,
       })
     );
+
+    // Save results to the backend
+    await saveMockResults(score, questions.length * 4);
 
     router.push(`/gio-event/results`);
   };
@@ -197,8 +230,11 @@ const Quiz = () => {
       )}
 
       <div className="w-full max-w-4xl bg-white p-6 rounded-md shadow-md">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-[#2563EB]">Quiz</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-center">
+          <div className="flex items-center mb-4 sm:mb-0">
+            <Image src="/GIOLOGO.png" alt="QUIZ LOGO" width={48} height={48} className="h-12 w-12 mr-4" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#2563EB] text-center sm:text-left">GLOBAL INNOVATOR OLYMPIAD</h1>
+          </div>
           <div className="flex items-center">
             <span className="text-[#FF2D55] font-semibold">{timeLeft}s</span>
           </div>
