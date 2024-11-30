@@ -1,6 +1,12 @@
-import Image from 'next/image';
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+  const router = useRouter(); // use useRouter hook to get router object
+
+  const handleRoute = () => {
+    router.push("/gio-profile"); // navigate to '/gio-profile'
+  };
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between bg-blue-500 text-white p-8 lg:p-16">
       {/* Left Section: Text Content */}
@@ -13,7 +19,10 @@ const Hero = () => {
           <li>Proven Reach and Participation</li>
           <li>Global Presence</li>
         </ul>
-        <button className="px-8 sm:px-10 py-3 sm:py-4 bg-green-500 text-white font-semibold text-lg sm:text-xl rounded-full hover:bg-black transition duration-300">
+        <button
+          onClick={handleRoute}
+          className="px-8 sm:px-10 py-3 sm:py-4 bg-green-500 text-white font-semibold text-lg sm:text-xl rounded-full hover:bg-black transition duration-300"
+        >
           Register Now
         </button>
       </div>
