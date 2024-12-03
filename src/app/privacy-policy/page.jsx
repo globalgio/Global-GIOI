@@ -11,6 +11,7 @@ import Privacy from "@/components/policies/privacy/Privacy";
 const Page = () => {
   return (
     <div>
+        <Cursor/>
     <Navbar/> 
     <Privacy/>
     <Footer/>

@@ -7,6 +7,7 @@ import Navbar from "@/components/layouts/navbar/navbar";
 const Page = () => {
   return (
     <div>
+      
       <Navbar />
       <Refund />
       <Footer />

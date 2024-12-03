@@ -1,11 +1,10 @@
-import PaymentPage from '@/components/gio-payments/PaymentPage'
+import Dashboard from '@/components/dashboard/Dashboard'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      
-        <PaymentPage/>
+        <Dashboard/>
     </div>
   )
 }

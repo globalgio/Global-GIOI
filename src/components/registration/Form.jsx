@@ -28,7 +28,17 @@ const Form = () => {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false); // Toggle between login and registration
   const [passwordError, setPasswordError] = useState(""); // To store password validation error
-
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    password: false,
+    confirmPassword: false,
+  });
+  const togglePasswordVisibility = (field) => {
+    setPasswordVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+    
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -156,34 +166,48 @@ const Form = () => {
           </div>
 
           {/* Password */}
-          <div className="col-span-1">
+          <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
-              type="password"
+              type={passwordVisibility.password ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
               className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               required
             />
+            <button
+              type="button"
+              onClick={() => togglePasswordVisibility("password")}
+              className="absolute right-3 top-10 text-gray-600 focus:outline-none"
+            >
+              {passwordVisibility.password ? "👁️" : "🙈"}
+            </button>
           </div>
 
           {/* Confirm Password */}
           {!isLogin && (
-            <div className="col-span-1">
+            <div className="col-span-1 relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
               </label>
               <input
-                type="password"
+                type={passwordVisibility.confirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 required
               />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility("confirmPassword")}
+                className="absolute right-3 top-10 text-gray-600 focus:outline-none"
+              >
+                {passwordVisibility.confirmPassword ? "👁️" : "🙈"}
+              </button>
               {passwordError && (
                 <p className="text-red-500 text-sm mt-1">{passwordError}</p>
               )}

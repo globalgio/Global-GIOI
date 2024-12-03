@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
@@ -219,20 +220,20 @@ const PaidQuiz = () => {
 
     const total = questions.length * 4;
 
+    const resultData = {
+      score,
+      total,
+      percentage: ((score / total) * 100).toFixed(0),
+      questions,
+      selectedAnswers,
+      type: "live", // Paid quiz type
+      timestamp: Date.now(), // Add timestamp
+    };
+
     saveLiveResults(score, total); // Save results to backend
 
-    const percentageScore = ((score / total) * 100).toFixed(0);
-
-    localStorage.setItem(
-      "paidQuizResult",
-      JSON.stringify({
-        score,
-        total,
-        percentage: percentageScore,
-        questions,
-        selectedAnswers,
-      })
-    );
+    // Save the result locally
+    localStorage.setItem("paidQuizResult", JSON.stringify(resultData));
 
     router.push(`/gio-event/results`);
   };

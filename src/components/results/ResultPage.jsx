@@ -7,34 +7,44 @@ import jsPDF from "jspdf";
 
 const Results = () => {
   const router = useRouter();
-  const [score, setScore] = useState(0);
-  const [total, setTotal] = useState(0);
+  const [score, setScore] = useState(null);
+  const [total, setTotal] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [progress, setProgress] = useState(0);
+  const [quizType, setQuizType] = useState(null);
 
   useEffect(() => {
-    // Retrieve paid quiz or normal quiz result data from localStorage
+    // Retrieve both quiz results from localStorage
+    const mockQuizResult = JSON.parse(
+      localStorage.getItem("quizResult") || "{}"
+    );
     const paidQuizResult = JSON.parse(
       localStorage.getItem("paidQuizResult") || "{}"
     );
-    const normalQuizResult = JSON.parse(
-      localStorage.getItem("quizResult") || "{}"
-    );
 
-    const quizResult = Object.keys(paidQuizResult).length
-      ? paidQuizResult
-      : normalQuizResult;
+    // Get timestamps
+    const mockTimestamp = mockQuizResult.timestamp || 0;
+    const paidTimestamp = paidQuizResult.timestamp || 0;
 
-    setScore(quizResult.score || 0);
-    setTotal(quizResult.total || 0);
-    setQuestions(quizResult.questions || []);
-    setSelectedAnswers(quizResult.selectedAnswers || []);
+    // Determine the latest test
+    const latestQuiz =
+      mockTimestamp > paidTimestamp ? mockQuizResult : paidQuizResult;
+
+    if (!latestQuiz || !latestQuiz.type) {
+      return; // No quiz data found
+    }
+
+    setQuizType(latestQuiz.type);
+    setScore(latestQuiz.score || 0);
+    setTotal(latestQuiz.total || 0);
+    setQuestions(latestQuiz.questions || []);
+    setSelectedAnswers(latestQuiz.selectedAnswers || []);
 
     // Simulate progress animation
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev < quizResult.score) {
+        if (prev < latestQuiz.score) {
           return prev + 1;
         } else {
           clearInterval(interval);
@@ -93,12 +103,20 @@ const Results = () => {
     doc.save("quiz-results.pdf");
   };
 
+  if (score === null || total === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading results...
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#E3F2FD] to-white flex flex-col items-center py-10 px-6">
       {/* Progress Section */}
       <div className="w-full max-w-3xl">
         <h1 className="text-4xl font-bold text-center text-[#2563EB] mb-8">
-          Your Results
+          {quizType === "mock" ? "Mock Test Results" : "Paid Test Results"}
         </h1>
         <div className="bg-white p-8 rounded-lg shadow-md">
           <h2 className="text-3xl font-bold text-center text-gray-700 mb-4">
@@ -167,7 +185,11 @@ const Results = () => {
       {/* Action Buttons */}
       <div className="flex space-x-6 mt-10">
         <button
-          onClick={() => router.push("/gio-event/quiz")}
+          onClick={() =>
+            quizType === "mock"
+              ? router.push("/gio-event/quiz")
+              : router.push("/gio-event/paid-quiz")
+          }
           className="px-6 py-3 bg-[#2563EB] text-white rounded-lg shadow hover:bg-[#1D4ED8] transition transform hover:scale-105"
         >
           Try Again

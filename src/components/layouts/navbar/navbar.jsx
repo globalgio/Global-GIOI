@@ -4,11 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaCaretDown } from "react-icons/fa";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [isOpen, setIsOpen] = useState(false); // Mobile menu state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Dropdown state for Register/Login
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status state
   const pathname = usePathname();
 
   // Check if user is logged in on component mount
@@ -19,8 +20,11 @@ const Navbar = () => {
     }
   }, []);
 
-  // Function to toggle the menu on mobile
+  // Function to toggle the mobile menu
   const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  // Function to toggle the dropdown
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -62,21 +66,44 @@ const Navbar = () => {
             </Link>
           ))}
 
-          {/* Show Profile if user is logged in, otherwise show Register/Login */}
+          {/* Show Profile if user is logged in */}
           {isLoggedIn ? (
             <Link
               href="/profile"
-              className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+              className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
             >
               Profile
             </Link>
           ) : (
-            <Link
-              href="/gio-profile"
-              className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
-            >
-              Register/Login
-            </Link>
+            <div className="relative group">
+              {/* Register/Login Button */}
+              <button
+                onClick={toggleDropdown}
+                className="flex items-center px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
+              >
+                Register/Login <FaCaretDown className="ml-2" />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute top-14 right-0 w-52 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-2xl shadow-2xl py-3 z-50">
+                  <Link
+                    href="/gio-profile"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2"
+                  >
+                    Students
+                  </Link>
+                  <Link
+                    href="/schools"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2 mt-2"
+                  >
+                    Schools
+                  </Link>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -90,6 +117,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white shadow-md">
           <div className="flex flex-col items-center p-4 space-y-6">
@@ -108,23 +136,51 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Show Profile if user is logged in, otherwise show Register/Login */}
+            {/* Show Profile if user is logged in */}
             {isLoggedIn ? (
               <Link
                 href="/profile"
                 onClick={toggleMenu}
-                className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
+                className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
               >
                 Profile
               </Link>
             ) : (
-              <Link
-                href="/gio-profile"
-                onClick={toggleMenu}
-                className="px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300"
-              >
-                Register/Login
-              </Link>
+              <div className="relative">
+                {/* Register/Login Button */}
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
+                >
+                  Register/Login <FaCaretDown className="ml-2" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute top-14 left-0 w-52 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-2xl shadow-2xl py-3 z-50">
+                    <Link
+                      href="/gio-profile"
+                      onClick={() => {
+                        toggleMenu();
+                        setIsDropdownOpen(false);
+                      }}
+                      className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2"
+                    >
+                      Students
+                    </Link>
+                    <Link
+                      href="/schools"
+                      onClick={() => {
+                        toggleMenu();
+                        setIsDropdownOpen(false);
+                      }}
+                      className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2 mt-2"
+                    >
+                      Schools
+                    </Link>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

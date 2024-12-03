@@ -1,68 +1,41 @@
 "use client"
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
 
 const Cursor = () => {
-  // State to hold the cursor position
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isMobile, setIsMobile] = useState(false);
+  const cursorRef = useRef(null);
 
-  // Track mouse position
   useEffect(() => {
-    // Check if the screen width is mobile (max-width 768px or adjust as needed)
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const cursorElement = cursorRef.current;
+
+    // Center the cursor on initial render
+    gsap.set(cursorElement, {
+      x: window.innerWidth / 2 - 8,
+      y: window.innerHeight / 2 - 8,
+    });
+
+    const moveCursor = (e) => {
+      gsap.to(cursorElement, {
+        x: e.clientX - 8,
+        y: e.clientY - 8,
+        ease: "power2.out", // Smooth easing
+        duration: 0.8, // Increased duration for a delayed, smoother follow
+      });
     };
 
-    // Add event listener for window resize
-    window.addEventListener("resize", handleResize);
+    // Add mousemove event listener
+    window.addEventListener("mousemove", moveCursor);
 
-    // Initial check on load
-    handleResize();
-
-    // Track mouse move event
-    const handleMouseMove = (e) => {
-      if (!isMobile) {  // Only update the cursor position if not on mobile
-        setCursorPosition({ x: e.clientX, y: e.clientY });
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    // Cleanup the event listeners on component unmount
+    // Clean up the event listener on component unmount
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousemove", moveCursor);
     };
-  }, [isMobile]);
-
-  // If it's a mobile device, return null to disable the cursor
-  if (isMobile) return null;
+  }, []);
 
   return (
-    <motion.div
-      style={{
-        position: "fixed",
-        left: "0",
-        top: "0",
-        pointerEvents: "none",
-        zIndex: 9999,
-        width: "15px", // Adjust size
-        height: "15px", // Adjust size
-        borderRadius: "50%", // Makes it a circle
-        backgroundColor: "#2563EB", // Customize color
-        transformOrigin: "center",
-        transform: "translate(-50%, -50%)", // Ensure it follows the mouse pointer and stays centered
-      }}
-      animate={{
-        left: cursorPosition.x,
-        top: cursorPosition.y,
-      }}
-      transition={{
-        type: "spring", // Smooth following
-        stiffness: 300, // More stiffness for quicker follow
-        damping: 25, // Smoother finish
-      }}
+    <div
+      ref={cursorRef}
+      className="w-3 h-3 bg-[#2563eb] fixed rounded-full pointer-events-none z-[99999] mix-blend-difference"
     />
   );
 };

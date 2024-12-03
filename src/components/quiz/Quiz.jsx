@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
@@ -176,17 +177,18 @@ const Quiz = () => {
 
     const percentageScore = ((score / (questions.length * 4)) * 100).toFixed(0);
 
+    const resultData = {
+      score,
+      total: questions.length * 4,
+      percentage: percentageScore,
+      questions,
+      selectedAnswers,
+      type: "mock", // Specify the test type
+      timestamp: Date.now(), // Add timestamp
+    };
+
     // Save quiz results to localStorage
-    localStorage.setItem(
-      "quizResult",
-      JSON.stringify({
-        score,
-        total: questions.length * 4,
-        percentage: percentageScore,
-        questions,
-        selectedAnswers,
-      })
-    );
+    localStorage.setItem("quizResult", JSON.stringify(resultData));
 
     // Save results to the backend
     await saveMockResults(score, questions.length * 4);
@@ -232,8 +234,16 @@ const Quiz = () => {
       <div className="w-full max-w-4xl bg-white p-6 rounded-md shadow-md">
         <div className="flex flex-col sm:flex-row justify-between items-center">
           <div className="flex items-center mb-4 sm:mb-0">
-            <Image src="/GIOLOGO.png" alt="QUIZ LOGO" width={48} height={48} className="h-12 w-12 mr-4" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#2563EB] text-center sm:text-left">GLOBAL INNOVATOR OLYMPIAD</h1>
+            <Image
+              src="/GIOLOGO.png"
+              alt="QUIZ LOGO"
+              width={48}
+              height={48}
+              className="h-12 w-12 mr-4"
+            />
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#2563EB] text-center sm:text-left">
+              GLOBAL INNOVATOR OLYMPIAD
+            </h1>
           </div>
           <div className="flex items-center">
             <span className="text-[#FF2D55] font-semibold">{timeLeft}s</span>
