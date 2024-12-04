@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 
@@ -35,7 +35,7 @@ const Cursor = () => {
   return (
     <div
       ref={cursorRef}
-      className="w-3 h-3 bg-[#2563eb] fixed rounded-full pointer-events-none z-[99999] mix-blend-difference"
+      className="cursor w-3 h-3 bg-[#2563eb] fixed rounded-full pointer-events-none z-[99999] mix-blend-difference hidden md:block"
     />
   );
 };
