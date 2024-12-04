@@ -45,7 +45,6 @@ const Profile = () => {
           return;
         }
 
-        // Fetch user profile
         const userResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`,
           {
@@ -56,7 +55,6 @@ const Profile = () => {
         );
         setData(userResponse.data.user);
 
-        // Fetch rankings and test counts
         const fetchAdditionalData = async () => {
           try {
             const [
@@ -102,8 +100,8 @@ const Profile = () => {
         };
 
         fetchAdditionalData();
-        const intervalId = setInterval(fetchAdditionalData, 10000); // Update every 10 seconds
-        return () => clearInterval(intervalId); // Cleanup on unmount
+        const intervalId = setInterval(fetchAdditionalData, 10000);
+        return () => clearInterval(intervalId);
       } catch (err) {
         console.error("Error fetching data:", err);
         router.push("/gio-profile");
@@ -128,7 +126,7 @@ const Profile = () => {
   }
 
   const renderRanking = (title, ranking) => (
-    <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
       <h4 className="text-lg font-semibold text-[#2563EB]">{title}</h4>
       {ranking && ranking.rank !== "TBD" ? (
         <div className="flex items-center gap-3 mt-4">
@@ -160,7 +158,6 @@ const Profile = () => {
 
   return (
     <>
-
       <Cursor />
       <Navbar />
       <div className="container mx-auto mt-8 px-6">
@@ -235,7 +232,6 @@ const Profile = () => {
                   )}
                 </div>
               </div>
-              {/* Personal Information */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
                   Personal Information
@@ -268,29 +264,40 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-
             {/* Test Counts Section */}
-            <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Test Counts
-              </h3>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-[#2563EB] font-semibold text-lg">
-                    Mock Tests
-                  </h4>
-                  <p className="text-gray-700 mt-2 text-sm">
-                    <strong>Total:</strong> {testCounts.mock}
-                  </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+              {/* Mock Test Count */}
+              <div className="bg-gradient-to-r from-blue-400 to-blue-600 text-white p-6 rounded-lg shadow-md hover:shadow-xl transition-transform transform hover:scale-105 duration-300">
+                <h4 className="text-xl font-bold flex items-center gap-2">
+                  🎯 Practice Test Count
+                </h4>
+                <div className="flex items-center justify-between mt-6">
+                  <div className="flex flex-col items-center">
+                    <span className="text-7xl">📘</span>
+                    <p className="mt-2 text-sm font-medium">Learn & Practice</p>
+                  </div>
+                  <p className="text-5xl font-extrabold">{testCounts.mock}</p>
                 </div>
-                <div>
-                  <h4 className="text-[#FF4D61] font-semibold text-lg">
-                    Live Tests
-                  </h4>
-                  <p className="text-gray-700 mt-2 text-sm">
-                    <strong>Total:</strong> {testCounts.live}
-                  </p>
+                <p className="text-sm mt-4 italic">
+                  "The more you practice, the better you'll shine!"
+                </p>
+              </div>
+
+              {/* Live Test Count */}
+              <div className="bg-gradient-to-r from-red-400 to-red-600 text-white p-6 rounded-lg shadow-md hover:shadow-xl transition-transform transform hover:scale-105 duration-300">
+                <h4 className="text-xl font-bold flex items-center gap-2">
+                  🚀 Live Test Count
+                </h4>
+                <div className="flex items-center justify-between mt-6">
+                  <div className="flex flex-col items-center">
+                    <span className="text-7xl">🌍</span>
+                    <p className="mt-2 text-sm font-medium">Compete Globally</p>
+                  </div>
+                  <p className="text-5xl font-extrabold">{testCounts.live}</p>
                 </div>
+                <p className="text-sm mt-4 italic">
+                  "Take on the world and showcase your talent!"
+                </p>
               </div>
             </div>
 
@@ -299,24 +306,24 @@ const Profile = () => {
               {/* Mock Test Rankings */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Mock Test Rankings
+                  Practice Test Rankings
                 </h3>
                 <div className="space-y-4">
-                  {renderRanking("Global Mock Ranking", rankings.mock.global)}
-                  {renderRanking("Country Mock Ranking", rankings.mock.country)}
-                  {renderRanking("State Mock Ranking", rankings.mock.state)}
+                  {renderRanking("Global  Practice Ranking", rankings.mock.global)}
+                  {renderRanking("Country  Practice Ranking", rankings.mock.country)}
+                  {renderRanking("State  Practice Ranking", rankings.mock.state)}
                 </div>
               </div>
 
               {/* Live Test Rankings */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Live Test Rankings
+                  Final Test Rankings
                 </h3>
                 <div className="space-y-4">
-                  {renderRanking("Global Live Ranking", rankings.live.global)}
-                  {renderRanking("Country Live Ranking", rankings.live.country)}
-                  {renderRanking("State Live Ranking", rankings.live.state)}
+                  {renderRanking("Global Final Ranking", rankings.live.global)}
+                  {renderRanking("Country Final Ranking", rankings.live.country)}
+                  {renderRanking("State Final Ranking", rankings.live.state)}
                 </div>
               </div>
             </div>
@@ -329,27 +336,27 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-gray-50 p-6 rounded-lg shadow-md">
                   <h4 className="text-lg font-semibold text-[#2563EB]">
-                    Mock Test
+                    Practice Test
                   </h4>
                   <p className="text-gray-600 mt-2">
                     Practice tests to prepare for the live exam.
                   </p>
                   <Link href="/gio-event/instructions">
                     <button className="bg-[#2563EB] text-white py-2 px-4 mt-4 rounded-md hover:bg-blue-600">
-                      Start Mock Test
+                      Start  Practice Test
                     </button>
                   </Link>
                 </div>
                 <div className="bg-gray-50 p-6 rounded-lg shadow-md">
                   <h4 className="text-lg font-semibold text-[#FF4D61]">
-                    Live Test
+                    Final Test
                   </h4>
                   <p className="text-gray-600 mt-2">
-                    Participate in the live test to rank globally.
+                    Participate in the Final test to rank globally.
                   </p>
                   <Link href="/gio-event/paid-instructions">
                     <button className="bg-[#FF4D61] text-white py-2 px-4 mt-4 rounded-md hover:bg-red-500">
-                      Start Live Test
+                      Start Final Test
                     </button>
                   </Link>
                 </div>

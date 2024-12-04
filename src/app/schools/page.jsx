@@ -1,4 +1,4 @@
-import AuthForm from '@/components/adminregistration/AuthForm'
+import AuthForm from '@/components/Register/adminregistration/AuthForm'
 import Footer from '@/components/layouts/footer/footer'
 import Navbar from '@/components/layouts/navbar/navbar'
 import React from 'react'

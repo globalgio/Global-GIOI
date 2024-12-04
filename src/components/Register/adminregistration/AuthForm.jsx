@@ -10,7 +10,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AuthForm = () => {
   const [activeTab, setActiveTab] = useState("login");
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState({
+    password: false,
+    confirmPassword: false,
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,8 +21,11 @@ const AuthForm = () => {
 
   const router = useRouter();
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible((prev) => !prev);
+  const togglePasswordVisibility = (field) => {
+    setPasswordVisible((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
 
   const handleLogin = async (e) => {
@@ -38,22 +44,15 @@ const AuthForm = () => {
         }
       );
 
-      console.log("Login Response:", response.data); // Debugging log
-
-      if (response.data.message === "Login successful") {
+      if (response.data.token) {
+        localStorage.setItem("schoolToken", response.data.token);
         toast.success("Login successful!");
-        // Add slight delay before redirect for better UX
         setTimeout(() => router.push("/dashboard"), 1000);
       } else {
-        toast.error(
-          response.data.message || "Invalid credentials, please try again."
-        );
+        toast.error(response.data.message || "Invalid credentials.");
       }
     } catch (error) {
-      console.error("Login Error:", error.response?.data || error.message);
-      toast.error(
-        error.response?.data?.message || "An error occurred while logging in."
-      );
+      toast.error(error.response?.data?.message || "An error occurred.");
     }
   };
 
@@ -70,35 +69,30 @@ const AuthForm = () => {
         return;
       }
 
-      const signupData = { email, password, confirmPassword, schoolName };
-      console.log("Signup Data:", signupData); // Debugging log
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/school/register`,
-        signupData
+        {
+          schoolName,
+          email,
+          password,
+          confirmPassword,
+        }
       );
 
-      console.log("Signup Response:", response.data); // Debugging log
-
-      if (response.data.message === "School registered successfully") {
-        toast.success("Signup successful! Redirecting to dashboard...");
-        // Add slight delay before redirect for better UX
+      if (response.data.token) {
+        localStorage.setItem("schoolToken", response.data.token);
+        toast.success("Signup successful!");
         setTimeout(() => router.push("/dashboard"), 1000);
       } else {
-        toast.error(
-          response.data.message || "Signup failed. Please try again."
-        );
+        toast.error(response.data.message || "Signup failed.");
       }
     } catch (error) {
-      console.error("Signup Error:", error.response?.data || error.message);
-      toast.error(
-        error.response?.data?.message || "An error occurred while signing up."
-      );
+      toast.error(error.response?.data?.message || "An error occurred.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <div className="flex justify-center mb-6">
@@ -121,15 +115,15 @@ const AuthForm = () => {
           </h1>
           <p className="text-gray-600">
             {activeTab === "login"
-              ? "Sign in to access your dashboard, settings, and projects."
-              : "Sign up to get started and manage your projects."}
+              ? "Sign in to access your dashboard."
+              : "Sign up to manage your school data."}
           </p>
         </div>
 
         <div className="flex justify-center mb-6">
           <button
             onClick={() => setActiveTab("login")}
-            className={`px-4 py-2 font-semibold rounded-l-lg transition-all duration-300 shadow-md ${
+            className={`px-4 py-2 font-semibold rounded-l-lg transition ${
               activeTab === "login"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-gray-800"
@@ -139,7 +133,7 @@ const AuthForm = () => {
           </button>
           <button
             onClick={() => setActiveTab("signup")}
-            className={`px-4 py-2 font-semibold rounded-r-lg transition-all duration-300 shadow-md ${
+            className={`px-4 py-2 font-semibold rounded-r-lg transition ${
               activeTab === "signup"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-gray-800"
@@ -166,7 +160,7 @@ const AuthForm = () => {
             <div className="mb-4 relative">
               <label className="block text-gray-700 mb-1">Password</label>
               <input
-                type={passwordVisible ? "text" : "password"}
+                type={passwordVisible.password ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -175,11 +169,10 @@ const AuthForm = () => {
               />
               <button
                 type="button"
-                onClick={togglePasswordVisibility}
-                className="absolute bottom-[15%] right-3 flex items-center text-gray-600 focus:outline-none"
-                style={{ right: '1rem' }}
+                onClick={() => togglePasswordVisibility("password")}
+                className="absolute bottom-[15%] right-3 text-gray-600"
               >
-                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                {passwordVisible.password ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
@@ -187,7 +180,7 @@ const AuthForm = () => {
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
             >
-              Sign in
+              Login
             </button>
           </form>
         )}
@@ -221,7 +214,7 @@ const AuthForm = () => {
             <div className="mb-4 relative">
               <label className="block text-gray-700 mb-1">Password</label>
               <input
-                type={passwordVisible ? "text" : "password"}
+                type={passwordVisible.password ? "text" : "password"}
                 placeholder="Create a password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -230,11 +223,10 @@ const AuthForm = () => {
               />
               <button
                 type="button"
-                onClick={togglePasswordVisibility}
-                className="absolute bottom-[15%] right-3 flex items-center text-gray-600 focus:outline-none"
-                style={{ right: '1rem' }}
+                onClick={() => togglePasswordVisibility("password")}
+                className="absolute bottom-[15%] right-3 text-gray-600"
               >
-                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                {passwordVisible.password ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
@@ -243,7 +235,7 @@ const AuthForm = () => {
                 Confirm Password
               </label>
               <input
-                type={passwordVisible ? "text" : "password"}
+                type={passwordVisible.confirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -252,11 +244,10 @@ const AuthForm = () => {
               />
               <button
                 type="button"
-                onClick={togglePasswordVisibility}
-                className="absolute bottom-[15%] right-3 flex items-center text-gray-600 focus:outline-none"
-                style={{ right: '1rem' }}
+                onClick={() => togglePasswordVisibility("confirmPassword")}
+                className="absolute bottom-[15%] right-3 text-gray-600"
               >
-                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                {passwordVisible.confirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
@@ -264,7 +255,7 @@ const AuthForm = () => {
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
             >
-              Create account
+              Signup
             </button>
           </form>
         )}
