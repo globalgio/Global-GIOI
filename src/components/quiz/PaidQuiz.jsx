@@ -1,5 +1,5 @@
 "use client";
-
+import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
@@ -207,9 +207,9 @@ const PaidQuiz = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let score = 0;
-
+  
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.answer) {
         score += 4; // +4 for correct answers
@@ -217,9 +217,9 @@ const PaidQuiz = () => {
         score -= 1; // -1 for incorrect answers
       }
     });
-
+  
     const total = questions.length * 4;
-
+  
     const resultData = {
       score,
       total,
@@ -229,15 +229,43 @@ const PaidQuiz = () => {
       type: "live", // Paid quiz type
       timestamp: Date.now(), // Add timestamp
     };
-
-    saveLiveResults(score, total); // Save results to backend
-
+  
+    // Save live results to backend
+    saveLiveResults(score, total); 
+  
     // Save the result locally
     localStorage.setItem("paidQuizResult", JSON.stringify(resultData));
-
-    router.push(`/gio-event/results`);
+  
+    // Call an API to update the payment status to "unpaid" after quiz submission
+    const token = localStorage.getItem("token");
+  
+    try {
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
+        {
+          paymentStatus: "unpaid", // Reset payment status
+          testCompleted: true, // Indicate test completion
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        console.log("Payment status reset to unpaid.");
+        // Redirect to the results page after updating the payment status
+        router.push(`/gio-event/results`);
+      } else {
+        console.error("Failed to update payment status.");
+      }
+    } catch (error) {
+      console.error("Error resetting payment status:", error);
+      toast.error("Failed to reset payment status. Please try again.");
+    }
   };
-
+  
   if (error) {
     return <p>Error: {error}</p>;
   }

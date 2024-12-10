@@ -1,26 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Added useEffect import
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
-import { ToastContainer, toast } from "react-toastify"; // Import Toastify for notifications
-import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PaymentPage = () => {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [userProfile, setUserProfile] = useState(null); // State to store user data
-  const [error, setError] = useState(null); // State to store errors
+  const [userProfile, setUserProfile] = useState(null);
+  const [error, setError] = useState(null);
+  const [referenceCode, setReferenceCode] = useState(""); // State for reference code
+  const [amount, setAmount] = useState(250); // Initial amount in INR
+  const [isCodeValid, setIsCodeValid] = useState(false); // State to track if the code is valid
 
   // Load Razorpay SDK
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
-    script.onload = () => console.log("Razorpay SDK loaded successfully");
-    script.onerror = () => console.error("Failed to load Razorpay SDK");
     document.body.appendChild(script);
-
     return () => {
       document.body.removeChild(script);
     };
@@ -52,7 +52,7 @@ const PaymentPage = () => {
         }
 
         const data = await response.json();
-        setUserProfile(data.user); // Store user profile data
+        setUserProfile(data.user);
       } catch (err) {
         console.error(err.message);
         setError(err.message);
@@ -61,6 +61,31 @@ const PaymentPage = () => {
 
     fetchUserProfile();
   }, []);
+
+  // Apply reference code with API validation
+  const applyReferenceCode = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/admin/validate-reference-code`,
+        { referenceCode }
+      );
+
+      if (response.data.success) {
+        setIsCodeValid(true);
+        setAmount(100); // Apply discount
+        toast.success(
+          "Reference code applied successfully! 60% discount applied."
+        );
+      } else {
+        setIsCodeValid(false);
+        toast.error("Invalid reference code. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error validating reference code:", error);
+      setIsCodeValid(false);
+      toast.error("Failed to validate reference code. Please try again.");
+    }
+  };
 
   // Handle payment
   const handlePayment = async () => {
@@ -75,15 +100,15 @@ const PaymentPage = () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/payment/create-order`,
         {
-          amount: 250, // Payment amount in INR
+          amount: amount, // Payment amount
         }
       );
 
-      const { orderId, amount, currency } = response.data;
+      const { orderId, currency } = response.data;
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: amount,
+        amount: amount * 100,
         currency: currency,
         name: "Global Innovator Olympiad",
         description: "Secure Payment",
@@ -91,16 +116,16 @@ const PaymentPage = () => {
         handler: async function (response) {
           toast.success("Payment Successful!");
           try {
-            // Update the user's payment status
             const token = localStorage.getItem("token");
+            // Update payment status to allow test attempt
             await axios.patch(
               `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
-              { paymentStatus: "paid_but_not_attempted" },
+              { paymentStatus: "paid_but_not_attempted" }, // Update to 'paid_but_not_attempted'
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
             );
-            router.push("/gio-event/paid-quiz"); // Redirect to the quiz
+            router.push("/gio-event/paid-quiz"); // Redirect to quiz page
           } catch (error) {
             console.error("Error updating payment status:", error);
             toast.error("Failed to update payment status. Please try again.");
@@ -134,10 +159,8 @@ const PaymentPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#E3F2FD] to-white">
-      <ToastContainer position="top-right" autoClose={3000} />{" "}
-      {/* Toast container */}
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-md w-full bg-white rounded-lg shadow-2xl p-8">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <img
             src="/GIOLOGO.png"
@@ -146,27 +169,52 @@ const PaymentPage = () => {
           />
         </div>
 
-        {/* Title */}
         <h1 className="text-3xl font-extrabold text-center text-[#2563eb] mb-6 tracking-wide">
           Global Innovator Olympiad
         </h1>
 
-        {/* Description */}
         <p className="text-center text-gray-500 mb-8 leading-relaxed">
           Secure your spot for the test! Your payment is secure and protected.
           We use advanced encryption and data safety measures to ensure your
           privacy.
         </p>
 
-        {/* Amount */}
+        <div className="flex flex-col mb-6">
+          <label className="text-gray-700 font-medium mb-2">
+            Reference Code:
+          </label>
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-gray-500">
+              Apply reference code to get{" "}
+              <span className="font-semibold">60% off</span>!
+            </p>
+            <div className="flex">
+              <input
+                type="text"
+                value={referenceCode}
+                onChange={(e) => setReferenceCode(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-l-md p-2 focus:ring focus:ring-blue-200"
+                placeholder="Enter reference code"
+              />
+              <button
+                onClick={applyReferenceCode}
+                className="bg-[#2563eb] text-white px-4 py-2 rounded-r-md hover:bg-blue-700"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between border border-gray-200 rounded-md p-5 bg-gray-50 shadow-sm mb-6">
           <span className="text-gray-700 text-lg font-medium">
             Amount (INR):
           </span>
-          <span className="text-2xl font-bold text-[#2563eb]">₹250.00</span>
+          <span className="text-2xl font-bold text-[#2563eb]">
+            ₹{amount}.00
+          </span>
         </div>
 
-        {/* Pay Button */}
         <button
           onClick={handlePayment}
           disabled={loading}
@@ -174,10 +222,9 @@ const PaymentPage = () => {
             loading ? "bg-gray-400 cursor-not-allowed" : ""
           }`}
         >
-          {loading ? "Processing..." : "Pay ₹250 Now"}
+          {loading ? "Processing..." : `Pay ₹${amount} Now`}
         </button>
 
-        {/* Footer Note */}
         <p className="text-center text-sm text-gray-400 mt-6">
           By proceeding, you agree to our{" "}
           <a

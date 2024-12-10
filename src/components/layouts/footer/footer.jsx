@@ -84,7 +84,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Social Media Icons */}
+          {/* Social Media Icons
           <div className="w-full md:w-1/4 flex flex-col items-center md:items-start">
             <h3 className="text-lg font-bold mb-2">Follow Us</h3>
             <div className="flex space-x-4 mt-4">
@@ -113,7 +113,7 @@ const Footer = () => {
                 <FaInstagram className="text-pink-500" />
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer Bottom Section */}

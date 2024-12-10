@@ -33,6 +33,7 @@ const Profile = () => {
     },
   });
   const [testCounts, setTestCounts] = useState({ mock: 0, live: 0 });
+  const [certificateCodes, setCertificateCodes] = useState([]); // Added for certificates
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -54,6 +55,7 @@ const Profile = () => {
           }
         );
         setData(userResponse.data.user);
+        setCertificateCodes(userResponse.data.user.certificateCodes || []); // Set certificates
 
         const fetchAdditionalData = async () => {
           try {
@@ -169,7 +171,19 @@ const Profile = () => {
                 <h1 className="text-2xl sm:text-3xl font-bold">
                   Global Innovator Olympiad
                 </h1>
-                <p className="text-lg mt-2 font-bold">{data.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg mt-2 font-bold flex items-center">
+                    {data.name}
+                    {data.country && (
+                      <ReactCountryFlag
+                        countryCode={data.country}
+                        svg
+                        style={{ width: "1.5em", height: "1.5em", marginLeft: "0.5em" }}
+                        title={data.country}
+                      />
+                    )}
+                  </p>
+                </div>
                 <p className="text-lg mt-2">Student</p>
               </div>
               <button
@@ -264,6 +278,18 @@ const Profile = () => {
                 </div>
               </div>
             </div>
+            {/* Certificate Codes */}
+            <p className="text-sm text-gray-800 mt-4">
+              <strong>Final Test Certificate Code:</strong>{" "}
+              {certificateCodes.length > 0 ? (
+                certificateCodes.join(", ")
+              ) : (
+                <span className="text-gray-600">
+                  No certificates generated yet.
+                </span>
+              )}
+            </p>
+
             {/* Test Counts Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
               {/* Mock Test Count */}
@@ -309,9 +335,18 @@ const Profile = () => {
                   Practice Test Rankings
                 </h3>
                 <div className="space-y-4">
-                  {renderRanking("Global  Practice Ranking", rankings.mock.global)}
-                  {renderRanking("Country  Practice Ranking", rankings.mock.country)}
-                  {renderRanking("State  Practice Ranking", rankings.mock.state)}
+                  {renderRanking(
+                    "Global  Practice Ranking",
+                    rankings.mock.global
+                  )}
+                  {renderRanking(
+                    "Country  Practice Ranking",
+                    rankings.mock.country
+                  )}
+                  {renderRanking(
+                    "State  Practice Ranking",
+                    rankings.mock.state
+                  )}
                 </div>
               </div>
 
@@ -322,7 +357,10 @@ const Profile = () => {
                 </h3>
                 <div className="space-y-4">
                   {renderRanking("Global Final Ranking", rankings.live.global)}
-                  {renderRanking("Country Final Ranking", rankings.live.country)}
+                  {renderRanking(
+                    "Country Final Ranking",
+                    rankings.live.country
+                  )}
                   {renderRanking("State Final Ranking", rankings.live.state)}
                 </div>
               </div>
@@ -343,7 +381,7 @@ const Profile = () => {
                   </p>
                   <Link href="/gio-event/instructions">
                     <button className="bg-[#2563EB] text-white py-2 px-4 mt-4 rounded-md hover:bg-blue-600">
-                      Start  Practice Test
+                      Start Practice Test
                     </button>
                   </Link>
                 </div>
