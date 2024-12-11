@@ -7,6 +7,7 @@ import { IoMdClose } from "react-icons/io"; // Close Icon
 import DashboardSection from "./DashboardSection";
 import StudentsSection from "./StudentsSection";
 import BulkSection from "./BulkSection";
+import VerifyCertificate from "./VerifyCertificate";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("students");
@@ -131,8 +132,6 @@ const Dashboard = () => {
     router.push("/");
   };
 
-
-
   const handleNextPage = () => {
     if (currentPage * studentsPerPage < filteredStudents.length) {
       setCurrentPage(currentPage + 1);
@@ -148,8 +147,12 @@ const Dashboard = () => {
   };
 
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false); // Close the mobile menu when a tab is clicked
+    if (tab === "home") {
+      router.push("/");
+    } else {
+      setActiveTab(tab);
+      setIsMobileMenuOpen(false); // Close the mobile menu when a tab is clicked
+    }
   };
 
   return (
@@ -189,33 +192,49 @@ const Dashboard = () => {
             )}
           </div>
           {/* Full Navbar for Desktop */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-5">
             <h4
-              className={`px-5 py-2 rounded-2xl font-bold transition-colors duration-300 cursor-pointer ${
-                activeTab === "profile" ? "bg-[#2563EB] text-white" : ""
+              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
+                activeTab === "home" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+              }`}
+              onClick={() => handleTabClick("home")}
+            >
+              Home
+            </h4>
+            <h4
+              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
+                activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+              }`}
+              onClick={() => handleTabClick("verifyCertificate")}
+            >
+              Verify Certificate
+            </h4>
+            <h4
+              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
+                activeTab === "profile" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
               }`}
               onClick={() => handleTabClick("profile")}
             >
-          Profile Overview
+              Profile Overview
             </h4>
             <h4
-              className={`px-5 py-2 rounded-2xl font-bold transition-colors duration-300 cursor-pointer ${
-                activeTab === "students" ? "bg-[#2563EB] text-white" : ""
+              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
+                activeTab === "students" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
               }`}
               onClick={() => handleTabClick("students")}
             >
              Enrolled Students
             </h4>
             <h4
-              className={`px-5 py-2 rounded-2xl font-bold transition-colors duration-300 cursor-pointer ${
-                activeTab === "bulkUpload" ? "bg-[#2563EB] text-white" : ""
+              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
+                activeTab === "bulkUpload" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
               }`}
               onClick={() => handleTabClick("bulkUpload")}
             >
               Batch Enrollment
             </h4>
             <button
-              className="px-5 py-2 bg-red-600 text-white rounded-2xl font-bold"
+              className="px-3 py-1 bg-red-600 text-white rounded-2xl font-bold text-sm"
               onClick={handleLogout}
             >
               Logout
@@ -228,24 +247,40 @@ const Dashboard = () => {
           <div className="absolute top-[15%] left-0 w-full bg-white shadow-lg z-10 p-5 md:hidden">
             <ul className="space-y-4">
               <li
-                className={`px-4 py-2 rounded-lg font-bold cursor-pointer ${
-                  activeTab === "profile" ? "bg-[#2563EB] text-white" : ""
+                className={`px-4 py-2 font-bold cursor-pointer ${
+                  activeTab === "home" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                }`}
+                onClick={() => handleTabClick("home")}
+              >
+                Home
+              </li>
+              <li
+                className={`px-4 py-2 font-bold cursor-pointer ${
+                  activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                }`}
+                onClick={() => handleTabClick("verifyCertificate")}
+              >
+                Verify Certificate
+              </li>
+              <li
+                className={`px-4 py-2 font-bold cursor-pointer ${
+                  activeTab === "profile" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
                 }`}
                 onClick={() => handleTabClick("profile")}
               >
                 Profile
               </li>
               <li
-                className={`px-4 py-2 rounded-lg font-bold cursor-pointer ${
-                  activeTab === "students" ? "bg-[#2563EB] text-white" : ""
+                className={`px-4 py-2 font-bold cursor-pointer ${
+                  activeTab === "students" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
                 }`}
                 onClick={() => handleTabClick("students")}
               >
                 Students
               </li>
               <li
-                className={`px-4 py-2 rounded-lg font-bold cursor-pointer ${
-                  activeTab === "bulkUpload" ? "bg-[#2563EB] text-white" : ""
+                className={`px-4 py-2 font-bold cursor-pointer ${
+                  activeTab === "bulkUpload" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
                 }`}
                 onClick={() => handleTabClick("bulkUpload")}
               >
@@ -264,6 +299,9 @@ const Dashboard = () => {
         )}
 
         {/* Render Section Based on Active Tab */}
+        {activeTab === "verifyCertificate" && (
+        <VerifyCertificate />
+        )}
         {activeTab === "profile" && (
           <DashboardSection
             userData={userData}

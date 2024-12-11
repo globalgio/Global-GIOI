@@ -72,7 +72,7 @@ const StudentsSection = ({
   const handleStandardFilterSelect = (standard) => {
     // Remove non-digit characters (e.g., 'th') from selected standard
     const normalizedStandard = standard.replace(/[^0-9]/g, "");
-    setSelectedStandard(normalizedStandard);
+    setSelectedStandard(normalizedStandard === "" ? "All" : normalizedStandard);
     setActiveFilter(null);
   };
 
@@ -167,92 +167,100 @@ const StudentsSection = ({
     return { mockTestsCount, liveTestsCount };
   };
   return (
-    <section className="DashboardHero w-full h-auto pt-5 bg-gray-100">
-      <div className="w-[90%] max-w-6xl mx-auto bg-white rounded-2xl shadow-md">
-        <div className="w-full h-full flex items-center px-6 py-4 justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">
-            📚 Enrollee Overview
+    <section className="DashboardHero w-full h-auto pt-5 bg-gray-50">
+      <div className="w-[90%] max-w-6xl mx-auto bg-white rounded-2xl shadow-lg">
+        <div className="w-full h-full flex items-center px-6 py-5 justify-between border-b">
+          <h1 className="text-3xl font-bold text-blue-600">
+            📚 GIO - Olympiad Tracker
           </h1>
           {schoolName && principalName && (
             <div className="flex flex-col items-end text-right">
-              <span className="text-gray-600 font-bold text-sm md:text-base">
+              <span className="text-gray-700 font-bold text-base">
                 {schoolName}
               </span>
-              <span className="text-gray-500 text-xs md:text-sm font-bold">
-                {principalName}
-              </span>
+              <span className="text-gray-500 text-sm">{principalName}</span>
             </div>
           )}
         </div>
       </div>
-      <div className="w-[90%] max-w-6xl mx-auto mt-5 bg-white rounded-2xl shadow-md">
+
+      <div className="w-[90%] max-w-6xl mx-auto mt-5 bg-white rounded-2xl shadow-lg">
         <div className="w-full px-4 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-4 text-gray-600 font-semibold text-sm border-b pb-3">
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-4 text-gray-700 font-semibold text-sm border-b pb-3">
+            {/* Name Filter */}
             <div className="flex items-center">
               <span>Name</span>
               <IoIosSearch
-                className="text-gray-500 text-xl ml-2 cursor-pointer"
+                className="text-gray-500 text-xl ml-2 cursor-pointer hover:text-blue-500 transition"
                 onClick={toggleSearchBar}
               />
             </div>
-            <div className="relative">
-  <span>Standard</span>
-  <IoIosFunnel
-    className="text-gray-500 text-xl ml-2 cursor-pointer"
-    onClick={() => toggleFilterDropdown("standard")}
-  />
-  {activeFilter === "standard" && (
-    <div className="absolute top-8 bg-white shadow-lg rounded-lg p-3 w-40 border border-gray-300 z-10">
-      <div
-        className={`p-2 hover:bg-gray-100 cursor-pointer ${
-          selectedStandard === "All" ? "font-bold" : ""
-        }`}
-        onClick={() => handleStandardFilterSelect("All")}
-      >
-        <IoMdCheckmarkCircle className="inline-block mr-2" /> All
-      </div>
-      {[5, 6, 7, 8, 9, 10].map((standard) => (
-        <div
-          key={standard}
-          className={`p-2 hover:bg-gray-100 cursor-pointer ${
-            selectedStandard === String(standard) ? "font-bold" : ""
-          }`}
-          onClick={() => handleStandardFilterSelect(`${standard}th`)}
-        >
-          <IoMdCheckmarkCircle className="inline-block mr-2" /> {standard}th
-        </div>
-      ))}
-    </div>
-  )}
-</div>
 
+            {/* Standard Filter */}
+            <div className="relative">
+              <span>Standard</span>
+              <IoIosFunnel
+                className="text-gray-500 text-xl ml-2 cursor-pointer hover:text-blue-500 transition"
+                onClick={() => toggleFilterDropdown("standard")}
+              />
+              {activeFilter === "standard" && (
+                <div className="absolute top-8 bg-white shadow-md rounded-lg p-3 w-40 border border-gray-300 z-10">
+                  <div
+                    className={`p-2 hover:bg-blue-50 cursor-pointer ${
+                      selectedStandard === "All" ? "font-bold" : ""
+                    }`}
+                    onClick={() => handleStandardFilterSelect("All")}
+                  >
+                    <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
+                    All
+                  </div>
+                  {[5, 6, 7, 8, 9, 10].map((standard) => (
+                    <div
+                      key={standard}
+                      className={`p-2 hover:bg-blue-50 cursor-pointer ${
+                        selectedStandard === String(standard) ? "font-bold" : ""
+                      }`}
+                      onClick={() =>
+                        handleStandardFilterSelect(`${standard}th`)
+                      }
+                    >
+                      <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
+                      {standard}th
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Count Filter */}
             <div className="relative">
               <span>Count</span>
               <IoIosFunnel
-                className="text-gray-500 text-xl ml-2 cursor-pointer"
+                className="text-gray-500 text-xl ml-2 cursor-pointer hover:text-blue-500 transition"
                 onClick={() => toggleFilterDropdown("count")}
               />
               {activeFilter === "count" && (
-                <div className="absolute top-8 bg-white shadow-lg rounded-lg p-3 w-40 border border-gray-300 z-10">
+                <div className="absolute top-8 bg-white shadow-md rounded-lg p-3 w-40 border border-gray-300 z-10">
                   <div
-                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                    className={`p-2 hover:bg-blue-50 cursor-pointer ${
                       selectedCountFilter === "All" ? "font-bold" : ""
                     }`}
                     onClick={() => handleCountFilterSelect("All")}
                   >
-                    <IoMdCheckmarkCircle className="inline-block mr-2" /> All
+                    <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
+                    All
                   </div>
                   <div
-                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                    className={`p-2 hover:bg-blue-50 cursor-pointer ${
                       selectedCountFilter === "Practice Test" ? "font-bold" : ""
                     }`}
                     onClick={() => handleCountFilterSelect("Practice Test")}
                   >
-                    <IoMdCheckmarkCircle className="inline-block mr-2" />{" "}
+                    <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
                     Practice Test
                   </div>
                   <div
-                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                    className={`p-2 hover:bg-blue-50 cursor-pointer ${
                       selectedCountFilter === "Final Practice Test"
                         ? "font-bold"
                         : ""
@@ -261,45 +269,55 @@ const StudentsSection = ({
                       handleCountFilterSelect("Final Practice Test")
                     }
                   >
-                    <IoMdCheckmarkCircle className="inline-block mr-2" /> Final
-                    Practice Test
+                    <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
+                    Final Practice Test
                   </div>
                   <div
-                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                    className={`p-2 hover:bg-blue-50 cursor-pointer ${
                       countSortOrder === "Low to High" ? "font-bold" : ""
                     }`}
                     onClick={() => handleSortOrderSelect("Low to High")}
                   >
-                    <IoMdCheckmarkCircle className="inline-block mr-2" /> Low to
-                    High
+                    <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
+                    Low to High
                   </div>
                   <div
-                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                    className={`p-2 hover:bg-blue-50 cursor-pointer ${
                       countSortOrder === "High to Low" ? "font-bold" : ""
                     }`}
                     onClick={() => handleSortOrderSelect("High to Low")}
                   >
-                    <IoMdCheckmarkCircle className="inline-block mr-2" /> High
-                    to Low
+                    <IoMdCheckmarkCircle className="inline-block mr-2 text-blue-500" />
+                    High to Low
                   </div>
                 </div>
               )}
             </div>
-            <div className="relative">
+
+            {/* Practice Rankings */}
+            <div>
               <span>Practice Rankings</span>
             </div>
-            <div className="relative">
+
+            {/* Final Rankings */}
+            <div>
               <span>Final Rankings</span>
             </div>
-            <div className="relative">
+
+            {/* Payment Status */}
+            <div>
               <span>Payment Status</span>
             </div>
-            <div className="relative">
+
+            {/* Credential ID */}
+            <div>
               <span>Credential ID</span>
             </div>
           </div>
+
+          {/* Search Box */}
           {showSearch && (
-            <div className="mt-3">
+            <div className="mt-4">
               <input
                 type="text"
                 value={searchName}
@@ -309,6 +327,8 @@ const StudentsSection = ({
               />
             </div>
           )}
+
+          {/* Students Data */}
           {displayedStudents.map((student, index) => {
             const { mockTestsCount, liveTestsCount } =
               getTestCountsForStudent(student);
@@ -329,34 +349,25 @@ const StudentsSection = ({
             return (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-7 gap-4 text-gray-800 text-sm py-3 border-b last:border-none"
+                className={`grid grid-cols-1 md:grid-cols-7 gap-4 text-gray-800 text-sm py-3 border-b last:border-none ${
+                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                }`}
               >
                 <span>{student.name}</span>
                 <span>{student.standard}</span>
                 <span>
-                  📝 Practice Tests: {displayMockCount}
-                  <br />
-                  📄 Final Tests: {displayLiveCount}
+                  • Practice Tests: {displayMockCount}
+                  <br />• Final Tests: {displayLiveCount}
                 </span>
                 <span>
-                  🌍 Global:{" "}
-                  {renderRanking(student.rankings?.practice?.global?.rank)}
-                  <br />
-                  🏴 Country:{" "}
-                  {renderRanking(student.rankings?.practice?.country?.rank)}
-                  <br />
-                  🏠 State:{" "}
-                  {renderRanking(student.rankings?.practice?.state?.rank)}
+                  • Global: {student.rankings?.final?.global?.rank}
+                  <br />• Country: {student.rankings?.final?.country?.rank}
+                  <br />• State: {student.rankings?.final?.state?.rank}
                 </span>
                 <span>
-                  🌍 Global:{" "}
-                  {renderRanking(student.rankings?.final?.global?.rank)}
-                  <br />
-                  🏴 Country:{" "}
-                  {renderRanking(student.rankings?.final?.country?.rank)}
-                  <br />
-                  🏠 State:{" "}
-                  {renderRanking(student.rankings?.final?.state?.rank)}
+                  • Global: {student.rankings?.practice?.global?.rank}
+                  <br />• Country: {student.rankings?.practice?.country?.rank}
+                  <br />• State: {student.rankings?.practice?.state?.rank}
                 </span>
                 <span>
                   <span
@@ -370,8 +381,7 @@ const StudentsSection = ({
                   </span>
                 </span>
                 <span>
-                  {student.certificateCodes &&
-                  student.certificateCodes.length > 0 ? (
+                  {student.certificateCodes?.length > 0 ? (
                     <ul className="list-disc ml-5">
                       {student.certificateCodes.map((code, idx) => (
                         <li key={idx}>{code}</li>
@@ -385,23 +395,24 @@ const StudentsSection = ({
             );
           })}
 
+          {/* Pagination */}
           {filteredStudents.length > studentsPerPage && (
             <div className="flex justify-between mt-5">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 disabled:opacity-50"
               >
-                ⬅️ Previous
+                Previous
               </button>
               <button
                 disabled={
                   currentPage * studentsPerPage >= filteredStudents.length
                 }
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 disabled:opacity-50"
               >
-                Next ➡️
+                Next
               </button>
             </div>
           )}

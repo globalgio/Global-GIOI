@@ -90,11 +90,10 @@ const PaidQuiz = () => {
         const data = await response.json();
         const { paymentStatus, testCompleted } = data.user;
 
-        // Redirect logic based on payment status and test completion
         if (paymentStatus !== "paid_but_not_attempted") {
           router.push("/payment"); // Redirect to payment if not paid
         } else if (testCompleted) {
-          router.push("/payment"); // Redirect to payment if test is already completed
+          router.push("/gio-event/results"); // Redirect to results if test completed
         } else {
           setUserProfile(data.user); // Allow access if everything is valid
         }
@@ -114,7 +113,15 @@ const PaidQuiz = () => {
       if (!userProfile) return;
 
       try {
-        const rawStandard = userProfile.standard;
+        let rawStandard = userProfile.standard;
+        console.log("Fetched standard:", rawStandard); // Debugging output
+
+        // Ensure rawStandard is converted to a string
+        if (typeof rawStandard !== "string") {
+          rawStandard = rawStandard.toString();
+        }
+
+        // Remove 'th' suffix if present (useful for strings like "10th")
         const standard = rawStandard.replace(/th$/, "");
 
         const distribution = questionDistributions[standard]?.subjects;
@@ -151,6 +158,7 @@ const PaidQuiz = () => {
 
         setQuestions(allQuestions.sort(() => 0.5 - Math.random()));
       } catch (err) {
+        console.error(err.message);
         setError(err.message);
       }
     };
@@ -209,7 +217,8 @@ const PaidQuiz = () => {
 
   const handleSubmit = async () => {
     let score = 0;
-  
+
+    // Calculate score
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.answer) {
         score += 4; // +4 for correct answers
@@ -217,55 +226,47 @@ const PaidQuiz = () => {
         score -= 1; // -1 for incorrect answers
       }
     });
-  
+
     const total = questions.length * 4;
-  
+
     const resultData = {
       score,
       total,
       percentage: ((score / total) * 100).toFixed(0),
       questions,
       selectedAnswers,
-      type: "live", // Paid quiz type
-      timestamp: Date.now(), // Add timestamp
+      type: "live",
+      timestamp: Date.now(),
     };
-  
-    // Save live results to backend
-    saveLiveResults(score, total); 
-  
-    // Save the result locally
+
+    saveLiveResults(score, total);
+
     localStorage.setItem("paidQuizResult", JSON.stringify(resultData));
-  
-    // Call an API to update the payment status to "unpaid" after quiz submission
+
     const token = localStorage.getItem("token");
-  
+
     try {
+      // Update payment status to "unpaid" after quiz submission to allow reattempt
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
         {
-          paymentStatus: "unpaid", // Reset payment status
-          testCompleted: true, // Indicate test completion
+          paymentStatus: "unpaid", // Set to "unpaid" to allow reattempt
+          testCompleted: true, // Ensure test is marked as completed
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       if (response.status === 200) {
-        console.log("Payment status reset to unpaid.");
-        // Redirect to the results page after updating the payment status
-        router.push(`/gio-event/results`);
+        console.log("Test completed successfully. Redirecting to results...");
+        router.push(`/gio-event/results`); // Redirect to results page
       } else {
         console.error("Failed to update payment status.");
       }
     } catch (error) {
       console.error("Error resetting payment status:", error);
-      toast.error("Failed to reset payment status. Please try again.");
     }
   };
-  
+
   if (error) {
     return <p>Error: {error}</p>;
   }

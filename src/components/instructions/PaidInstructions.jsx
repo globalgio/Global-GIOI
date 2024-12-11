@@ -1,10 +1,56 @@
 "use client";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-import React from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 
 const PaidInstructions = () => {
+  const router = useRouter();
+  const [paymentStatus, setPaymentStatus] = useState("unpaid");
+
+
+  useEffect(() => {
+    const fetchPaymentStatus = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const { paymentStatus, testCompleted } = response.data.user;
+        if (testCompleted) {
+          // If test is already completed, redirect to payment for the next attempt
+          setPaymentStatus("unpaid");
+        } else {
+          setPaymentStatus(paymentStatus || "unpaid");
+        }
+      } catch (error) {
+        console.error("Error fetching payment status:", error);
+        router.push("/login");
+      }
+    };
+
+    fetchPaymentStatus();
+  }, [router]);
+
+  const handlePayNow = () => {
+    router.push("/payment");
+  };
+
+  const handleStartQuiz = () => {
+    router.push("/gio-event/paid-quiz");
+  };
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#E3F2FD] to-white flex items-center justify-center px-6 py-10">
       <div className="max-w-4xl w-full bg-white p-10 rounded-lg shadow-lg relative">
@@ -133,13 +179,32 @@ const PaidInstructions = () => {
             </ul>
           </div>
 
-          {/* Start Paid Test Button */}
-          <div className="text-center">
-            <Link href="/payment">
-              <span className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white px-8 py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 inline-block text-lg font-semibold">
-                Start Paid Test
-              </span>
-            </Link>
+          <div className="text-center mt-10">
+            {paymentStatus === "unpaid" && (
+              <button
+                onClick={handlePayNow}
+                className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white px-8 py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 text-lg font-semibold"
+              >
+                Pay Now
+              </button>
+            )}
+
+            {paymentStatus === "paid_but_not_attempted" && (
+              <>
+                <button
+                  onClick={handleStartQuiz}
+                  className="bg-gradient-to-r from-green-500 to-green-700 text-white px-8 py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 text-lg font-semibold"
+                >
+                  Start Paid Quiz
+                </button>
+                <button
+                  onClick={() => router.push("/profile")}
+                  className="mt-4 text-gray-500 text-lg underline"
+                >
+                  Start Later
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

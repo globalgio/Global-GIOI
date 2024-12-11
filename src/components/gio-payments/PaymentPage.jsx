@@ -37,22 +37,16 @@ const PaymentPage = () => {
       }
 
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`,
           {
-            method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile.");
-        }
-
-        const data = await response.json();
-        setUserProfile(data.user);
+        setUserProfile(response.data.user);
       } catch (err) {
         console.error(err.message);
         setError(err.message);
@@ -89,19 +83,11 @@ const PaymentPage = () => {
 
   // Handle payment
   const handlePayment = async () => {
-    if (!userProfile) {
-      toast.error("User data is missing. Please reload the page.");
-      return;
-    }
-
     setLoading(true);
-
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/payment/create-order`,
-        {
-          amount: amount, // Payment amount
-        }
+        { amount }
       );
 
       const { orderId, currency } = response.data;
@@ -109,23 +95,20 @@ const PaymentPage = () => {
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: amount * 100,
-        currency: currency,
+        currency,
         name: "Global Innovator Olympiad",
         description: "Secure Payment",
         order_id: orderId,
-        handler: async function (response) {
+        handler: async function () {
           toast.success("Payment Successful!");
           try {
             const token = localStorage.getItem("token");
-            // Update payment status to allow test attempt
             await axios.patch(
               `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
-              { paymentStatus: "paid_but_not_attempted" }, // Update to 'paid_but_not_attempted'
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              }
+              { paymentStatus: "paid_but_not_attempted" },
+              { headers: { Authorization: `Bearer ${token}` } }
             );
-            router.push("/gio-event/paid-quiz"); // Redirect to quiz page
+            router.push("/gio-event/paid-instructions"); // Redirect to Instructions
           } catch (error) {
             console.error("Error updating payment status:", error);
             toast.error("Failed to update payment status. Please try again.");

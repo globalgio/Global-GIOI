@@ -61,7 +61,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="/coordinator" className="hover:underline">
-                  Teacher Coordinator
+                  Partner Program
                 </a>
               </li>
             </ul>
@@ -133,7 +133,17 @@ const Footer = () => {
                 Terms & Conditions
               </a>
             </div>
-            <p>© 2011-2024 GIO All Rights Reserved. Nexcore Allience LLP</p>
+            <p>
+              © 2011-2024 GIO All Rights Reserved.{" "}
+              <a
+                href="https://nexcorealliance.com/"
+                target="_blank"
+                className="font-extrabold uppercase"
+              >
+                Nexcore Alliance LLP
+              </a>
+            </p>
+            <span>Global Innovator Olympiad</span>
           </div>
         </div>
       </footer>

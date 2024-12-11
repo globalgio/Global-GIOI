@@ -131,9 +131,13 @@ const Form = () => {
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl p-6 sm:p-8 lg:p-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-6">
-          {isLogin ? "Login" : "Registration"} Form
+        <h1 className="text-3xl sm:text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-[#2563EB] text-transparent bg-clip-text mb-6 drop-shadow-xl">
+          {isLogin ? "🌟 Rediscover Innovation - GIO Login 🌟" : "🌈 Step Into Innovation - GIO Registration 🌈"} 
         </h1>
+        <p className="text-center text-gray-700 mb-6 text-lg italic leading-relaxed">
+          {isLogin ? "✨ Access your gateway to global brilliance. Log in to GIO and keep innovating! ✨" : "🌟 Unleash your potential and join the global stage of innovation. Register now for the GIO and make your mark! 🌟"}
+        </p>
+        
 
         <div className="text-center mb-6">
           <button

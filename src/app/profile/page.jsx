@@ -9,11 +9,12 @@ import Footer from "@/components/layouts/footer/footer";
 import {
   FaAdjust,
   FaCannabis,
-  FaChalkboardTeacher,
   FaPhoneAlt,
   FaWhatsapp,
   FaMedal,
 } from "react-icons/fa";
+import { BiSolidUserAccount } from "react-icons/bi";
+import { FaSchoolCircleCheck } from "react-icons/fa6";
 import Link from "next/link";
 import Notifications from "@/components/notification/Notifications";
 import Cursor from "@/components/cursor/Cursor";
@@ -222,23 +223,34 @@ const Profile = () => {
                   )}
                   {data.PhoneNumber && (
                     <div className="flex items-center gap-3">
-                      <FaPhoneAlt className="w-5 h-5 text-[#2563EB]" />
-                      <span className="text-sm text-gray-600">
-                        {data.PhoneNumber}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #2563EB, #2563EB)" }}>
+                          <FaPhoneAlt className="text-white text-sm" />
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {data.PhoneNumber}
+                        </span>
+                      </div>
                     </div>
                   )}
                   {data.whatsappNumber && (
                     <div className="flex items-center gap-3">
-                      <FaWhatsapp className="w-5 h-5 text-[#2563EB]" />
-                      <span className="text-sm text-gray-600">
-                        {data.whatsappNumber}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}>
+                          <FaWhatsapp className="text-white" />
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {data.whatsappNumber}
+                        </span>
+                      </div>
                     </div>
                   )}
                   {data.teacherPhoneNumber && (
                     <div className="flex items-center gap-3">
-                      <FaChalkboardTeacher className="w-5 h-5 text-[#2563EB]" />
+                       <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #2563EB, #2563EB)" }}>
+                        
+                      <BiSolidUserAccount className="text-white text-sm" />
+                        </div>
                       <span className="text-sm text-gray-600">
                         Teacher: {data.teacherPhoneNumber}
                       </span>
@@ -252,7 +264,7 @@ const Profile = () => {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <MdSchool className="w-5 h-5 text-[#2563EB]" />
+                  <FaSchoolCircleCheck  className="w-5 h-5 text-[#2563EB]" />
                     <span className="text-sm text-gray-600">
                       {data.schoolName}
                     </span>
@@ -377,7 +389,7 @@ const Profile = () => {
                     Practice Test
                   </h4>
                   <p className="text-gray-600 mt-2">
-                    Practice tests to prepare for the live exam.
+                  Sharpen your skills with practice tests for live exam success!
                   </p>
                   <Link href="/gio-event/instructions">
                     <button className="bg-[#2563EB] text-white py-2 px-4 mt-4 rounded-md hover:bg-blue-600">
@@ -390,7 +402,7 @@ const Profile = () => {
                     Final Test
                   </h4>
                   <p className="text-gray-600 mt-2">
-                    Participate in the Final test to rank globally.
+                  Join the Final Test to rank globally and earn your certificate!
                   </p>
                   <Link href="/gio-event/paid-instructions">
                     <button className="bg-[#FF4D61] text-white py-2 px-4 mt-4 rounded-md hover:bg-red-500">

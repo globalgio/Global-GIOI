@@ -9,14 +9,20 @@ import { FaBars, FaTimes, FaCaretDown } from "react-icons/fa";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Dropdown state for Register/Login
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status state
+  const [userRole, setUserRole] = useState(null); // User role state: "student" or "school"
   const pathname = usePathname();
 
-  // Check if user is logged in on component mount
+  // Check user role on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true); // User is logged in
+    const studentToken = localStorage.getItem("token");
+    const schoolToken = localStorage.getItem("schoolToken");
+
+    if (studentToken) {
+      setUserRole("student"); // User is logged in as a student
+    } else if (schoolToken) {
+      setUserRole("school"); // User is logged in as a school
+    } else {
+      setUserRole(null); // No user is logged in
     }
   }, []);
 
@@ -25,6 +31,13 @@ const Navbar = () => {
 
   // Function to toggle the dropdown
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("studentToken");
+    localStorage.removeItem("schoolToken");
+    setUserRole(null); // Clear the role
+  };
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -66,13 +79,20 @@ const Navbar = () => {
             </Link>
           ))}
 
-          {/* Show Profile if user is logged in */}
-          {isLoggedIn ? (
+          {/* Conditionally Render Profile/Dashboard or Register/Login */}
+          {userRole === "student" ? (
             <Link
               href="/profile"
               className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
             >
               Profile
+            </Link>
+          ) : userRole === "school" ? (
+            <Link
+              href="/dashboard"
+              className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
+            >
+              Dashboard
             </Link>
           ) : (
             <div className="relative group">
@@ -89,14 +109,24 @@ const Navbar = () => {
                 <div className="absolute top-14 right-0 w-52 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-2xl shadow-2xl py-3 z-50">
                   <Link
                     href="/gio-profile"
-                    onClick={() => setIsDropdownOpen(false)}
+                    onClick={() => {
+                      localStorage.setItem("studentToken", "dummyStudentToken");
+                      localStorage.removeItem("schoolToken");
+                      setUserRole("student");
+                      toggleDropdown();
+                    }}
                     className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2"
                   >
                     Students
                   </Link>
                   <Link
                     href="/schools"
-                    onClick={() => setIsDropdownOpen(false)}
+                    onClick={() => {
+                      localStorage.setItem("schoolToken", "dummySchoolToken");
+                      localStorage.removeItem("studentToken");
+                      setUserRole("school");
+                      toggleDropdown();
+                    }}
                     className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2 mt-2"
                   >
                     Schools
@@ -136,14 +166,22 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Show Profile if user is logged in */}
-            {isLoggedIn ? (
+            {/* Conditionally Render Profile/Dashboard or Register/Login */}
+            {userRole === "student" ? (
               <Link
                 href="/profile"
                 onClick={toggleMenu}
                 className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
               >
                 Profile
+              </Link>
+            ) : userRole === "school" ? (
+              <Link
+                href="/dashboard"
+                onClick={toggleMenu}
+                className="px-4 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold text-xl rounded-full hover:scale-105 transition-transform duration-300 shadow-lg"
+              >
+                Dashboard
               </Link>
             ) : (
               <div className="relative">
@@ -161,8 +199,14 @@ const Navbar = () => {
                     <Link
                       href="/gio-profile"
                       onClick={() => {
+                        localStorage.setItem(
+                          "studentToken",
+                          "dummyStudentToken"
+                        );
+                        localStorage.removeItem("schoolToken");
+                        setUserRole("student");
+                        toggleDropdown();
                         toggleMenu();
-                        setIsDropdownOpen(false);
                       }}
                       className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2"
                     >
@@ -171,8 +215,11 @@ const Navbar = () => {
                     <Link
                       href="/schools"
                       onClick={() => {
+                        localStorage.setItem("schoolToken", "dummySchoolToken");
+                        localStorage.removeItem("studentToken");
+                        setUserRole("school");
+                        toggleDropdown();
                         toggleMenu();
-                        setIsDropdownOpen(false);
                       }}
                       className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2 mt-2"
                     >
