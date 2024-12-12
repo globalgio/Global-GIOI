@@ -157,7 +157,7 @@ const Form = () => {
           {/* username */}
           <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              username
+              Username
             </label>
             <input
               type="username"
@@ -224,18 +224,17 @@ const Form = () => {
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name
+                  <span className="text-xs ml-1 font-semibold text-blue-600">(as it appears on the certificate)</span>
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="w-full p-3 rounded-md border uppercase border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   required
                 />
-                <p className="text-sm text-gray-600 mt-1 bg-blue-100 border-l-4 border-blue-500 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
-                  <span className="font-semibold text-blue-700">✨ Important:</span> Please provide the name that will appear on your certificate.
-                </p>
+            
               </div>
 
               {/* Phone Number */}
@@ -400,7 +399,7 @@ const Form = () => {
                   name="schoolName"
                   value={formData.schoolName}
                   onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="w-full p-3 rounded-md border uppercase border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   required
                 />
               </div>

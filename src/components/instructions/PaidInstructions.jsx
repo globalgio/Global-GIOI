@@ -193,15 +193,15 @@ const PaidInstructions = () => {
               <>
                 <button
                   onClick={handleStartQuiz}
-                  className="bg-gradient-to-r from-green-500 to-green-700 text-white px-8 py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 text-lg font-semibold"
+                  className="bg-gradient-to-r from-green-500 to-green-700 text-white px-8 py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 text-lg font-semibold mr-5 mb-4 sm:mb-0"
                 >
                   Start Paid Quiz
                 </button>
                 <button
                   onClick={() => router.push("/profile")}
-                  className="mt-4 text-gray-500 text-lg underline"
+                  className="bg-gradient-to-r from-gray-300 to-gray-500 text-white px-8 py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 text-lg font-semibold"
                 >
-                  Start Later
+                  Start Quiz Later
                 </button>
               </>
             )}

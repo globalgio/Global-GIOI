@@ -360,14 +360,27 @@ const StudentsSection = ({
                   <br />• Final Tests: {displayLiveCount}
                 </span>
                 <span>
-                  • Global: {student.rankings?.final?.global?.rank}
-                  <br />• Country: {student.rankings?.final?.country?.rank}
-                  <br />• State: {student.rankings?.final?.state?.rank}
+                  {(selectedCountFilter === "Practice Test" || selectedCountFilter === "All") && (
+                    <>
+                      • Global:{" "}
+                      {student.rankings?.practice?.global?.rank || "N/A"}
+                      <br />• Country:{" "}
+                      {student.rankings?.practice?.country?.rank || "N/A"}
+                      <br />• State:{" "}
+                      {student.rankings?.practice?.state?.rank || "N/A"}
+                    </>
+                  )}
                 </span>
                 <span>
-                  • Global: {student.rankings?.practice?.global?.rank}
-                  <br />• Country: {student.rankings?.practice?.country?.rank}
-                  <br />• State: {student.rankings?.practice?.state?.rank}
+                  {(selectedCountFilter === "Final Practice Test" || selectedCountFilter === "All") && (
+                    <>
+                      • Global: {student.rankings?.final?.global?.rank || "N/A"}
+                      <br />• Country:{" "}
+                      {student.rankings?.final?.country?.rank || "N/A"}
+                      <br />• State:{" "}
+                      {student.rankings?.final?.state?.rank || "N/A"}
+                    </>
+                  )}
                 </span>
                 <span>
                   <span

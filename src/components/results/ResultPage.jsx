@@ -57,50 +57,80 @@ const Results = () => {
   }, []);
 
   const downloadPDF = () => {
+    const userName = localStorage.getItem("userName") || "Participant"; // Get user's name
+    const organization = "Global Innovator Olympiad"; // Organization name
+
     const doc = new jsPDF();
 
-    // Title
-    doc.setFontSize(18);
-    doc.text("Quiz Results", 10, 10);
-
-    // Score Summary
+    // Add a banner
+    doc.setFillColor(38, 99, 235); // Blue color
+    doc.rect(0, 0, 210, 30, "F"); // Fill a rectangle (full-width banner)
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255); // White text
+    doc.text(organization, 105, 12, { align: "center" }); // Organization Name
     doc.setFontSize(14);
-    doc.text(`Score: ${score} out of ${total}`, 10, 20);
-    doc.text(`Percentage: ${((score / total) * 100).toFixed(2)}%`, 10, 30);
+    doc.text(`Certificate of Achievement`, 105, 20, { align: "center" });
 
-    // Question Analysis
+    // Add user name
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0); // Black text
+    doc.text(`Awarded to: ${userName}`, 105, 40, { align: "center" });
+
+    // Add a score summary
+    doc.setFontSize(14);
+    doc.text(`Score: ${score} / ${total}`, 10, 60);
+    doc.text(`Percentage: ${((score / total) * 100).toFixed(2)}%`, 10, 70);
+
+    // Add a divider
+    doc.setDrawColor(0, 0, 0); // Black color
+    doc.line(10, 75, 200, 75); // Draw a horizontal line
+
+    // Add question analysis
     doc.setFontSize(12);
-    let yPosition = 40; // Starting position for content
+    doc.text("Question Analysis:", 10, 85);
+    let yPosition = 95; // Initial Y-position for question analysis
     questions.forEach((question, index) => {
+      doc.setTextColor(0, 0, 0); // Black text
       doc.text(`Q${index + 1}: ${question.question}`, 10, yPosition);
       yPosition += 10;
 
       // Correct Answer
+      doc.setTextColor(34, 139, 34); // Green text
       doc.text(`Correct Answer: ${question.answer}`, 20, yPosition);
       yPosition += 10;
 
       // Your Answer
       const userAnswer = selectedAnswers[index] || "Not Answered";
+      const isCorrect = userAnswer === question.answer;
+      doc.setTextColor(
+        isCorrect ? 34 : 220,
+        isCorrect ? 139 : 20,
+        isCorrect ? 34 : 60
+      ); // Green for correct, Red for incorrect
       doc.text(`Your Answer: ${userAnswer}`, 20, yPosition);
+      yPosition += 10;
 
-      // Highlight if wrong
-      if (userAnswer !== question.answer) {
-        doc.text("Status: Incorrect", 20, yPosition + 10);
-      } else {
-        doc.text("Status: Correct", 20, yPosition + 10);
-      }
+      // Status
+      doc.setTextColor(0, 0, 0); // Black text
+      doc.text(`Status: ${isCorrect ? "Correct" : "Incorrect"}`, 20, yPosition);
+      yPosition += 15;
 
-      yPosition += 20; // Space between questions
-
-      // Add a new page if content exceeds page height
+      // Page Break
       if (yPosition > 270) {
         doc.addPage();
         yPosition = 10;
       }
     });
 
+    // Footer with branding
+    doc.setFontSize(10);
+    doc.setTextColor(128, 128, 128); // Gray text
+    doc.text(`${organization} - Empowering Minds for Innovation`, 105, 290, {
+      align: "center",
+    });
+
     // Save the PDF
-    doc.save("quiz-results.pdf");
+    doc.save(`${userName}-quiz-results.pdf`);
   };
 
   if (score === null || total === null) {

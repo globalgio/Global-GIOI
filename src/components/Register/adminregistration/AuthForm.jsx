@@ -18,6 +18,7 @@ const AuthForm = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [schoolName, setSchoolName] = useState("");
+  const [principalName, setPrincipalName] = useState("");
 
   const router = useRouter();
 
@@ -59,7 +60,13 @@ const AuthForm = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      if (!schoolName || !email || !password || !confirmPassword) {
+      if (
+        !schoolName ||
+        !email ||
+        !password ||
+        !confirmPassword ||
+        !principalName
+      ) {
         toast.error("Please fill in all fields.");
         return;
       }
@@ -73,6 +80,7 @@ const AuthForm = () => {
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/school/register`,
         {
           schoolName,
+          principalName,
           email,
           password,
           confirmPassword,
@@ -194,6 +202,18 @@ const AuthForm = () => {
                 placeholder="Enter your school name"
                 value={schoolName}
                 onChange={(e) => setSchoolName(e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-1">Principal Name</label>
+              <input
+                type="text"
+                placeholder="Enter the principal's name"
+                value={principalName}
+                onChange={(e) => setPrincipalName(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
