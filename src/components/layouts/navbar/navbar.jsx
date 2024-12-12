@@ -34,7 +34,7 @@ const Navbar = () => {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("studentToken");
+    localStorage.removeItem("token");
     localStorage.removeItem("schoolToken");
     setUserRole(null); // Clear the role
   };
@@ -110,10 +110,7 @@ const Navbar = () => {
                   <Link
                     href="/gio-profile"
                     onClick={() => {
-                      localStorage.setItem("studentToken", "dummyStudentToken");
-                      localStorage.removeItem("schoolToken");
-                      setUserRole("student");
-                      toggleDropdown();
+                      toggleDropdown(); // Close dropdown
                     }}
                     className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2"
                   >
@@ -122,10 +119,7 @@ const Navbar = () => {
                   <Link
                     href="/schools"
                     onClick={() => {
-                      localStorage.setItem("schoolToken", "dummySchoolToken");
-                      localStorage.removeItem("studentToken");
-                      setUserRole("school");
-                      toggleDropdown();
+                      toggleDropdown(); // Close dropdown
                     }}
                     className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2 mt-2"
                   >
@@ -198,29 +192,14 @@ const Navbar = () => {
                   <div className="absolute top-14 left-0 w-52 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-2xl shadow-2xl py-3 z-50">
                     <Link
                       href="/gio-profile"
-                      onClick={() => {
-                        localStorage.setItem(
-                          "studentToken",
-                          "dummyStudentToken"
-                        );
-                        localStorage.removeItem("schoolToken");
-                        setUserRole("student");
-                        toggleDropdown();
-                        toggleMenu();
-                      }}
+                      onClick={toggleMenu}
                       className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2"
                     >
                       Students
                     </Link>
                     <Link
                       href="/schools"
-                      onClick={() => {
-                        localStorage.setItem("schoolToken", "dummySchoolToken");
-                        localStorage.removeItem("studentToken");
-                        setUserRole("school");
-                        toggleDropdown();
-                        toggleMenu();
-                      }}
+                      onClick={toggleMenu}
                       className="block px-5 py-3 text-lg font-medium text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 hover:shadow-lg transition-all duration-300 rounded-md mx-2 mt-2"
                     >
                       Schools

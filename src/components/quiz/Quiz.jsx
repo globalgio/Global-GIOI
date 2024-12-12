@@ -89,7 +89,7 @@ const Quiz = () => {
         setUserProfile(data.user);
 
         const rawStandard = data.user.standard;
-        const standard = rawStandard.replace(/th$/, "");
+        const standard = String(rawStandard).replace(/th$/, "");
 
         const distribution = questionDistributions[standard]?.subjects;
         if (!distribution) {
@@ -241,12 +241,17 @@ const Quiz = () => {
               height={48}
               className="h-12 w-12 mr-4"
             />
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#2563EB] text-center sm:text-left">
-              GLOBAL INNOVATOR OLYMPIAD
-            </h1>
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#2563EB]">
+                GLOBAL INNOVATOR OLYMPIAD
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Innovator: {userProfile?.name || "User"}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center">
-            <span className="text-[#FF2D55] font-semibold">{timeLeft}s</span>
+          <div className="flex items-center mt-2 sm:mt-0">
+            <span className="text-2xl text-[#FF2D55] font-semibold">{timeLeft}s</span>
           </div>
         </div>
         <motion.div className="relative w-full h-4 mt-4 rounded-full bg-gray-300 overflow-hidden shadow-md">

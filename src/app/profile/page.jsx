@@ -291,12 +291,12 @@ const Profile = () => {
               </div>
             </div>
             {/* Certificate Codes */}
-            <p className="text-sm text-gray-800 mt-4">
-              <strong>Final Test Certificate Code:</strong>{" "}
+            <p className="text-sm text-gray-600 mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
+              <span className="font-semibold text-blue-600">✨ Final Test Certificate Code:</span>{" "}
               {certificateCodes.length > 0 ? (
-                certificateCodes.join(", ")
+                <span className="text-gray-800">{certificateCodes.join(", ")}</span>
               ) : (
-                <span className="text-gray-600">
+                <span className="text-gray-500">
                   No certificates generated yet.
                 </span>
               )}
@@ -324,7 +324,7 @@ const Profile = () => {
               {/* Live Test Count */}
               <div className="bg-gradient-to-r from-red-400 to-red-600 text-white p-6 rounded-lg shadow-md hover:shadow-xl transition-transform transform hover:scale-105 duration-300">
                 <h4 className="text-xl font-bold flex items-center gap-2">
-                  🚀 Live Test Count
+                  🚀 Final Test Count
                 </h4>
                 <div className="flex items-center justify-between mt-6">
                   <div className="flex flex-col items-center">

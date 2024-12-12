@@ -223,7 +223,7 @@ const Form = () => {
               {/* Name */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
+                  Full Name
                 </label>
                 <input
                   type="text"
@@ -233,6 +233,9 @@ const Form = () => {
                   className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   required
                 />
+                <p className="text-sm text-gray-600 mt-1 bg-blue-100 border-l-4 border-blue-500 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
+                  <span className="font-semibold text-blue-700">✨ Important:</span> Please provide the name that will appear on your certificate.
+                </p>
               </div>
 
               {/* Phone Number */}
