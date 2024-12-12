@@ -17,7 +17,6 @@ const VerifyCertificate = () => {
     setVerificationStatus(null);
 
     try {
-      // API call to verify the certificate
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/verify`,
         {
@@ -36,13 +35,14 @@ const VerifyCertificate = () => {
       }
 
       const data = await response.json();
+    
 
       setIsVerified(true);
       setVerificationStatus("Certificate Verified Successfully!");
-      setCertificateData(data); // Set certificate data fetched from the server
-      console.log(data); //
-      generateCertificate(data); // Generate PDF after successful verification
+      setCertificateData(data);
+      generateCertificate(data);
     } catch (error) {
+      console.error("Verification Error:", error.message);
       setIsVerified(false);
       setVerificationStatus(error.message);
     } finally {
@@ -52,107 +52,89 @@ const VerifyCertificate = () => {
 
   const generateCertificate = async (data) => {
     try {
-      const templateUrl = "/gioi-certificate.pdf"; // Path to your existing PDF template
+      const templateUrl = "/gioi-certificate.pdf";
       const existingPdfBytes = await fetch(templateUrl).then((res) =>
         res.arrayBuffer()
       );
 
       const pdfDoc = await PDFDocument.load(existingPdfBytes);
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
 
-      // Define positions based on the certificate template
-      const nameX = 260;
+      const nameX = 210;
       const nameY = 580;
-
       const globalRankX = 335;
       const globalRankY = 455;
-
       const countryRankX = 338;
       const countryRankY = 428;
-
       const stateRankX = 340;
       const stateRankY = 403;
-
       const certificateIdX = 310;
       const certificateIdY = 295;
+      const dateX = 430;
+      const dateY = 183;
 
-      // Populate certificate details dynamically with the name, rankings, and certificate code
-      firstPage.drawText((data.name || "N/A").toUpperCase(), {
+      const name = data.name || "N/A";
+      firstPage.drawText(name.toUpperCase(), {
         x: nameX,
         y: nameY,
         size: 18,
-        font: font,
+        font: boldFont,
         color: rgb(0, 0, 0),
-        opacity: 1,
-        lineHeight: 1.2,
-        fontSize: 18,
-        fontWeight: "bold",
       });
 
-      firstPage.drawText(
-        (data.rankings.global.rank?.toString() || "N/A").toUpperCase(),
-        {
-          x: globalRankX,
-          y: globalRankY,
-          size: 16,
-          font: font,
-          color: rgb(0, 0, 0),
-          opacity: 1,
-          lineHeight: 1.2,
-          fontSize: 16,
-          fontWeight: "bold",
-        }
-      );
+      const globalRank = data.rankings.global.rank || "N/A";
+      firstPage.drawText(`#${globalRank}`, {
+        x: globalRankX,
+        y: globalRankY,
+        size: 14,
+        font: boldFont,
+        color: rgb(0, 0, 0),
+      });
 
-      firstPage.drawText(
-        (data.rankings.country.rank?.toString() || "N/A").toUpperCase(),
-        {
-          x: countryRankX,
-          y: countryRankY,
-          size: 16,
-          font: font,
-          color: rgb(0, 0, 0),
-          opacity: 1,
-          lineHeight: 1.2,
-          fontSize: 16,
-          fontWeight: "bold",
-        }
-      );
+      const countryRank = data.rankings.country.rank || "N/A";
+      firstPage.drawText(`#${countryRank}`, {
+        x: countryRankX,
+        y: countryRankY,
+        size: 14,
+        font: boldFont,
+        color: rgb(0, 0, 0),
+      });
 
-      firstPage.drawText(
-        (data.rankings.state.rank?.toString() || "N/A").toUpperCase(),
-        {
-          x: stateRankX,
-          y: stateRankY,
-          size: 16,
-          font: font,
-          color: rgb(0, 0, 0),
-          opacity: 1,
-          lineHeight: 1.2,
-          fontSize: 16,
-          fontWeight: "bold",
-        }
-      );
+      const stateRank = data.rankings.state.rank || "N/A";
+      firstPage.drawText(`#${stateRank}`, {
+        x: stateRankX,
+        y: stateRankY,
+        size: 14,
+        font: boldFont,
+        color: rgb(0, 0, 0),
+      });
 
-      firstPage.drawText((data.code || "N/A").toUpperCase(), {
+      firstPage.drawText((data.certificateCode || "N/A").toUpperCase(), {
         x: certificateIdX,
         y: certificateIdY,
         size: 14,
-        font: font,
+        font: boldFont,
         color: rgb(0, 0, 0),
-        opacity: 1,
-        lineHeight: 1.2,
-        fontSize: 14,
-        fontWeight: "bold",
       });
 
-      // Save the modified PDF
+      const formattedDate = `Date: ${new Date(
+        data.timestamp
+      ).toLocaleDateString()}`;
+      firstPage.drawText(formattedDate, {
+        x: dateX,
+        y: dateY,
+        size: 12,
+        font: boldFont,
+        color: rgb(0, 0, 0),
+      });
+
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      setPdfUrl(url); // Update the state to render the certificate
+      setPdfUrl(url);
     } catch (error) {
       console.error("Error generating certificate:", error);
     }
@@ -161,7 +143,6 @@ const VerifyCertificate = () => {
   return (
     <section className="verify-section w-full flex items-center justify-center bg-[#f4f6f9] py-8 px-4">
       <div className="w-full max-w-4xl bg-white rounded-3xl flex flex-col items-center p-6 md:p-8 lg:p-12 shadow-lg">
-        {/* Title and Description */}
         <div className="text-center mb-8">
           <motion.h1
             className="text-2xl md:text-3xl font-bold text-[#106EB5]"
@@ -177,15 +158,13 @@ const VerifyCertificate = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
-            Please enter the unique certificate number to verify its
-            authenticity.
+            Enter the certificate number to verify its authenticity.
           </motion.p>
         </div>
 
-        {/* Certificate Verification Form */}
         <motion.form
           className="w-full max-w-md space-y-4"
-          onSubmit={handleVerification} // Ensure handleVerification is properly bound to the form
+          onSubmit={handleVerification}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
@@ -218,7 +197,6 @@ const VerifyCertificate = () => {
           </motion.button>
         </motion.form>
 
-        {/* Verification Status */}
         {verificationStatus && (
           <motion.div
             className={`mt-4 text-center text-sm md:text-xl font-semibold ${
@@ -232,7 +210,6 @@ const VerifyCertificate = () => {
           </motion.div>
         )}
 
-        {/* View Certificate Button */}
         {isVerified && !pdfUrl && (
           <motion.button
             className="mt-6 py-3 px-8 bg-green-500 text-white rounded-md"
@@ -242,7 +219,6 @@ const VerifyCertificate = () => {
           </motion.button>
         )}
 
-        {/* Render PDF in iframe */}
         {pdfUrl && (
           <div className="mt-6 w-full">
             <iframe

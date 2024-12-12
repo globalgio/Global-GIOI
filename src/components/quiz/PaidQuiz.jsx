@@ -185,9 +185,7 @@ const PaidQuiz = () => {
   const saveLiveResults = async (score, total) => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("User is not logged in.");
-      }
+      if (!token) throw new Error("User is not logged in.");
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
@@ -197,11 +195,7 @@ const PaidQuiz = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            score,
-            total,
-            type: "live", // Distinguish between mock and live test
-          }),
+          body: JSON.stringify({ score, total, type: "live" }),
         }
       );
 
@@ -209,7 +203,24 @@ const PaidQuiz = () => {
         throw new Error("Failed to save live quiz results.");
       }
 
-      console.log("Live quiz results saved successfully.");
+      const data = await response.json();
+      console.log("Live quiz results saved:", data);
+
+      // Fetch updated rankings to reflect on the frontend
+      const rankingsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/get-user-rankings?type=live`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const rankingsData = await rankingsResponse.json();
+      console.log("Updated Rankings:", rankingsData);
+
+      return rankingsData;
     } catch (err) {
       console.error("Error saving live quiz results:", err.message);
     }
@@ -218,7 +229,6 @@ const PaidQuiz = () => {
   const handleSubmit = async () => {
     let score = 0;
 
-    // Calculate score
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.answer) {
         score += 4; // +4 for correct answers
@@ -229,41 +239,31 @@ const PaidQuiz = () => {
 
     const total = questions.length * 4;
 
-    const resultData = {
-      score,
-      total,
-      percentage: ((score / total) * 100).toFixed(0),
-      questions,
-      selectedAnswers,
-      type: "live",
-      timestamp: Date.now(),
-    };
-
-    saveLiveResults(score, total);
-
-    localStorage.setItem("paidQuizResult", JSON.stringify(resultData));
-
-    const token = localStorage.getItem("token");
-
     try {
-      // Update payment status to "unpaid" after quiz submission to allow reattempt
-      const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
         {
-          paymentStatus: "unpaid", // Set to "unpaid" to allow reattempt
-          testCompleted: true, // Ensure test is marked as completed
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ score, total, type: "live" }),
+        }
       );
 
-      if (response.status === 200) {
-        console.log("Test completed successfully. Redirecting to results...");
-        router.push(`/gio-event/results`); // Redirect to results page
-      } else {
-        console.error("Failed to update payment status.");
+      if (!response.ok) {
+        throw new Error("Failed to save quiz marks.");
       }
+
+      const data = await response.json();
+      console.log("Updated Rankings:", data.rankings);
+
+      // Redirect to results or display updated rankings
+      router.push(`/gio-event/results`);
     } catch (error) {
-      console.error("Error resetting payment status:", error);
+      console.error("Error submitting quiz:", error.message);
     }
   };
 

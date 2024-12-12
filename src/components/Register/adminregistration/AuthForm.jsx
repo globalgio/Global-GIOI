@@ -119,12 +119,12 @@ const AuthForm = () => {
 
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
-            {activeTab === "login" ? "Welcome back" : "Create an account"}
+            {activeTab === "login" ? "Take Charge" : "Activate Your School Dashboard"}
           </h1>
           <p className="text-gray-600">
             {activeTab === "login"
-              ? "Sign in to access your dashboard."
-              : "Sign up to manage your school data."}
+              ? "Sign in to continue where you left off."
+              : "Sign up to manage your school data effortlessly."}
           </p>
         </div>
 

@@ -55,8 +55,11 @@ const Profile = () => {
             },
           }
         );
+
         setData(userResponse.data.user);
-        setCertificateCodes(userResponse.data.user.certificateCodes.code || []); // Set certificates
+        setCertificateCodes(
+          userResponse.data.user?.certificateCodes?.code || []
+        ); // Set certificates
 
         const fetchAdditionalData = async () => {
           try {
@@ -64,6 +67,7 @@ const Profile = () => {
               mockRankingsResponse,
               liveRankingsResponse,
               testCountsResponse,
+              userProfileResponse, // Fetch user profile again for real-time certificate code
             ] = await Promise.all([
               axios.get(
                 `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/get-rank?type=mock`,
@@ -89,22 +93,37 @@ const Profile = () => {
                   },
                 }
               ),
+              axios.get(
+                `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/gio-profile`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              ),
             ]);
 
+            // Update rankings
             setRankings({
               mock: mockRankingsResponse.data.rankings || rankings.mock,
               live: liveRankingsResponse.data.rankings || rankings.live,
             });
 
+            // Update test counts
             setTestCounts(testCountsResponse.data || testCounts);
+
+            // Update certificate codes in real-time
+            setCertificateCodes(
+              userProfileResponse.data.user?.certificateCodes?.code || []
+            );
           } catch (err) {
             console.error("Error fetching additional data:", err);
           }
         };
 
         fetchAdditionalData();
-        const intervalId = setInterval(fetchAdditionalData, 10000);
-        return () => clearInterval(intervalId);
+        const intervalId = setInterval(fetchAdditionalData, 500); // Fetch updates every 10 seconds
+        return () => clearInterval(intervalId); // Cleanup
       } catch (err) {
         console.error("Error fetching data:", err);
         router.push("/gio-profile");
@@ -312,21 +331,21 @@ const Profile = () => {
               </div>
             </div>
             {/* Certificate Codes */}
-            <p className="text-sm text-gray-600 mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
+            <div className="text-sm text-gray-600 mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
               <span className="font-semibold text-blue-600">
                 ✨ Final Test Certificate Code:
-              </span>{" "}
-              {certificateCodes ? (
-                <p className="text-gray-800 text-sm">
+              </span>
+              {certificateCodes && certificateCodes.length > 0 ? (
+                <div className="text-gray-800 text-sm mt-2">
                   Your Certificate Code:{" "}
                   <span className="font-semibold">{certificateCodes}</span>
-                </p>
+                </div>
               ) : (
-                <p className="text-gray-500 text-sm">
+                <div className="text-gray-500 text-sm mt-2">
                   No certificate code available yet.
-                </p>
+                </div>
               )}
-            </p>
+            </div>
 
             {/* Test Counts Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
