@@ -56,7 +56,7 @@ const Profile = () => {
           }
         );
         setData(userResponse.data.user);
-        setCertificateCodes(userResponse.data.user.certificateCodes || []); // Set certificates
+        setCertificateCodes(userResponse.data.user.certificateCodes.code || []); // Set certificates
 
         const fetchAdditionalData = async () => {
           try {
@@ -179,7 +179,11 @@ const Profile = () => {
                       <ReactCountryFlag
                         countryCode={data.country}
                         svg
-                        style={{ width: "1.5em", height: "1.5em", marginLeft: "0.5em" }}
+                        style={{
+                          width: "1.5em",
+                          height: "1.5em",
+                          marginLeft: "0.5em",
+                        }}
                         title={data.country}
                       />
                     )}
@@ -224,7 +228,13 @@ const Profile = () => {
                   {data.PhoneNumber && (
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #2563EB, #2563EB)" }}>
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #2563EB, #2563EB)",
+                          }}
+                        >
                           <FaPhoneAlt className="text-white text-sm" />
                         </div>
                         <span className="text-sm text-gray-600">
@@ -236,7 +246,13 @@ const Profile = () => {
                   {data.whatsappNumber && (
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}>
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #25D366, #128C7E)",
+                          }}
+                        >
                           <FaWhatsapp className="text-white" />
                         </div>
                         <span className="text-sm text-gray-600">
@@ -247,10 +263,15 @@ const Profile = () => {
                   )}
                   {data.teacherPhoneNumber && (
                     <div className="flex items-center gap-3">
-                       <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #2563EB, #2563EB)" }}>
-                        
-                      <BiSolidUserAccount className="text-white text-sm" />
-                        </div>
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #2563EB, #2563EB)",
+                        }}
+                      >
+                        <BiSolidUserAccount className="text-white text-sm" />
+                      </div>
                       <span className="text-sm text-gray-600">
                         Teacher: {data.teacherPhoneNumber}
                       </span>
@@ -264,7 +285,7 @@ const Profile = () => {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                  <FaSchoolCircleCheck  className="w-5 h-5 text-[#2563EB]" />
+                    <FaSchoolCircleCheck className="w-5 h-5 text-[#2563EB]" />
                     <span className="text-sm text-gray-600">
                       {data.schoolName}
                     </span>
@@ -292,13 +313,18 @@ const Profile = () => {
             </div>
             {/* Certificate Codes */}
             <p className="text-sm text-gray-600 mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
-              <span className="font-semibold text-blue-600">✨ Final Test Certificate Code:</span>{" "}
-              {certificateCodes.length > 0 ? (
-                <span className="text-gray-800">{certificateCodes.join(", ")}</span>
+              <span className="font-semibold text-blue-600">
+                ✨ Final Test Certificate Code:
+              </span>{" "}
+              {certificateCodes ? (
+                <p className="text-gray-800 text-sm">
+                  Your Certificate Code:{" "}
+                  <span className="font-semibold">{certificateCodes}</span>
+                </p>
               ) : (
-                <span className="text-gray-500">
-                  No certificates generated yet.
-                </span>
+                <p className="text-gray-500 text-sm">
+                  No certificate code available yet.
+                </p>
               )}
             </p>
 
@@ -389,7 +415,8 @@ const Profile = () => {
                     Practice Test
                   </h4>
                   <p className="text-gray-600 mt-2">
-                  Sharpen your skills with practice tests for live exam success!
+                    Sharpen your skills with practice tests for live exam
+                    success!
                   </p>
                   <Link href="/gio-event/instructions">
                     <button className="bg-[#2563EB] text-white py-2 px-4 mt-4 rounded-md hover:bg-blue-600">
@@ -402,7 +429,8 @@ const Profile = () => {
                     Final Test
                   </h4>
                   <p className="text-gray-600 mt-2">
-                  Join the Final Test to rank globally and earn your certificate!
+                    Join the Final Test to rank globally and earn your
+                    certificate!
                   </p>
                   <Link href="/gio-event/paid-instructions">
                     <button className="bg-[#FF4D61] text-white py-2 px-4 mt-4 rounded-md hover:bg-red-500">
