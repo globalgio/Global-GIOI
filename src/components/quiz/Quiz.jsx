@@ -159,7 +159,7 @@ const Quiz = () => {
         throw new Error("Failed to save mock test results.");
       }
 
-      console.log("Mock test results saved successfully.");
+     
     } catch (err) {
       console.error("Error saving mock test results:", err);
     }
@@ -248,6 +248,11 @@ const Quiz = () => {
               <p className="text-sm text-gray-600 mt-1">
                 Innovator: {userProfile?.name || "User"}
               </p>
+               {userProfile?.schoolName && (
+                <p className="text-sm text-gray-600 mt-1">
+                  School: {userProfile.schoolName}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex items-center mt-2 sm:mt-0">

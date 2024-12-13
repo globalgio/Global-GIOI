@@ -27,7 +27,7 @@ const Results = () => {
     const mockTimestamp = mockQuizResult.timestamp || 0;
     const paidTimestamp = paidQuizResult.timestamp || 0;
 
-    // Determine the latest test
+    // Determine the latest test based on the timestamp
     const latestQuiz =
       mockTimestamp > paidTimestamp ? mockQuizResult : paidQuizResult;
 

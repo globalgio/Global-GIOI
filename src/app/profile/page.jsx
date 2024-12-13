@@ -192,7 +192,7 @@ const Profile = () => {
                   Global Innovator Olympiad
                 </h1>
                 <div className="flex items-center gap-2">
-                  <p className="text-lg mt-2 font-bold flex items-center">
+                  <p className="text-lg mt-2 font-bold flex items-center uppercase">
                     {data.name}
                     {data.country && (
                       <ReactCountryFlag

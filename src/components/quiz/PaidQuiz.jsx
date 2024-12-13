@@ -114,7 +114,7 @@ const PaidQuiz = () => {
 
       try {
         let rawStandard = userProfile.standard;
-        console.log("Fetched standard:", rawStandard); // Debugging output
+      
 
         // Ensure rawStandard is converted to a string
         if (typeof rawStandard !== "string") {
@@ -204,7 +204,7 @@ const PaidQuiz = () => {
       }
 
       const data = await response.json();
-      console.log("Live quiz results saved:", data);
+     
 
       // Fetch updated rankings to reflect on the frontend
       const rankingsResponse = await fetch(
@@ -218,7 +218,7 @@ const PaidQuiz = () => {
       );
 
       const rankingsData = await rankingsResponse.json();
-      console.log("Updated Rankings:", rankingsData);
+     
 
       return rankingsData;
     } catch (err) {
@@ -229,6 +229,7 @@ const PaidQuiz = () => {
   const handleSubmit = async () => {
     let score = 0;
 
+    // Calculate score based on correct and incorrect answers
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.answer) {
         score += 4; // +4 for correct answers
@@ -238,10 +239,52 @@ const PaidQuiz = () => {
     });
 
     const total = questions.length * 4;
+    const percentageScore = ((score / total) * 100).toFixed(2); // Calculate percentage
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
+      if (!token) {
+        throw new Error("No token found, please login again.");
+      }
+
+      // Save the live quiz result to localStorage
+      const liveQuizResult = {
+        score,
+        total,
+        percentage: percentageScore,
+        questions,
+        selectedAnswers,
+        type: "live", // Specify the test type
+        timestamp: Date.now(), // Add timestamp
+      };
+
+      // Update localStorage with the live quiz result
+      localStorage.setItem("paidQuizResult", JSON.stringify(liveQuizResult));
+
+      // Call the backend API to update payment status to 'unpaid'
+      const paymentStatusResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-payment-status`,
+        {
+          method: "PATCH", // Use PATCH to match the backend route
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ paymentStatus: "unpaid" }), // Update payment status to unpaid
+        }
+      );
+
+      if (!paymentStatusResponse.ok) {
+        const errorResponse = await paymentStatusResponse.json();
+        throw new Error(
+          `Failed to update payment status. Response: ${JSON.stringify(
+            errorResponse
+          )}`
+        );
+      }
+
+      // Save the live quiz marks
+      const saveMarksResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/save-quiz-marks`,
         {
           method: "POST",
@@ -253,17 +296,19 @@ const PaidQuiz = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to save quiz marks.");
+      if (!saveMarksResponse.ok) {
+        const saveErrorResponse = await saveMarksResponse.json();
+        throw new Error(
+          `Failed to save live quiz marks. Response: ${JSON.stringify(
+            saveErrorResponse
+          )}`
+        );
       }
 
-      const data = await response.json();
-      console.log("Updated Rankings:", data.rankings);
-
-      // Redirect to results or display updated rankings
+      // Redirect to results page
       router.push(`/gio-event/results`);
     } catch (error) {
-      console.error("Error submitting quiz:", error.message);
+      console.error("Error submitting quiz:", error.message); // Log the error for debugging
     }
   };
 
@@ -319,6 +364,11 @@ const PaidQuiz = () => {
               <p className="text-sm text-gray-600 mt-1">
                 Innovator: {userProfile?.name || "User"}
               </p>
+              {userProfile?.schoolName && (
+                <p className="text-sm text-gray-600 mt-1">
+                  School: {userProfile.schoolName}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex items-center">
