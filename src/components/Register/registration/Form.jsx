@@ -38,7 +38,7 @@ const Form = () => {
       [field]: !prev[field],
     }));
   };
-    
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -51,27 +51,53 @@ const Form = () => {
       return;
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-
     if (name === "country") {
       const selectedCountry = Country.getAllCountries().find(
         (country) => country.isoCode === value
       );
       setStates(State.getStatesOfCountry(selectedCountry?.isoCode || ""));
-      setFormData({ ...formData, country: value, state: "", city: "" });
+      setFormData({
+        ...formData,
+        country: selectedCountry ? selectedCountry.name : "", // Save full name in formData
+        countryCode: value, // Save the isoCode for dropdown selection
+        state: "",
+        city: "",
+      });
       setCities([]);
+      return;
     }
 
     if (name === "state") {
       const selectedState = states.find((state) => state.isoCode === value);
       setCities(
-        City.getCitiesOfState(formData.country, selectedState?.isoCode || "")
+        City.getCitiesOfState(
+          Country.getAllCountries().find((c) => c.name === formData.country)
+            ?.isoCode || "",
+          selectedState?.isoCode || ""
+        )
       );
-      setFormData({ ...formData, state: value, city: "" });
+      setFormData({
+        ...formData,
+        state: selectedState ? selectedState.name : "", // Save full name in formData
+        stateCode: value, // Save the isoCode for dropdown selection
+        city: "",
+      });
+      return;
     }
+
+    if (name === "city") {
+      const selectedCity = cities.find((city) => city.name === value);
+      setFormData({
+        ...formData,
+        city: selectedCity ? selectedCity.name : "", // Save full name in formData
+      });
+      return;
+    }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -132,12 +158,15 @@ const Form = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl p-6 sm:p-8 lg:p-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-[#2563EB] text-transparent bg-clip-text mb-6 drop-shadow-xl">
-          {isLogin ? "🌟 Rediscover Innovation - GIO Login 🌟" : "🌈 Step Into Innovation - GIO Registration 🌈"} 
+          {isLogin
+            ? "🌟 Rediscover Innovation - GIO Login 🌟"
+            : "🌈 Step Into Innovation - GIO Registration 🌈"}
         </h1>
         <p className="text-center text-gray-700 mb-6 text-lg italic leading-relaxed">
-          {isLogin ? "✨ Access your gateway to global brilliance. Log in to GIO and keep innovating! ✨" : "🌟 Unleash your potential and join the global stage of innovation. Register now for the GIO and make your mark! 🌟"}
+          {isLogin
+            ? "✨ Access your gateway to global brilliance. Log in to GIO and keep innovating! ✨"
+            : "🌟 Unleash your potential and join the global stage of innovation. Register now for the GIO and make your mark! 🌟"}
         </p>
-        
 
         <div className="text-center mb-6">
           <button
@@ -224,7 +253,9 @@ const Form = () => {
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name
-                  <span className="text-xs ml-1 font-semibold text-blue-600">(as it appears on the certificate)</span>
+                  <span className="text-xs ml-1 font-semibold text-blue-600">
+                    (as it appears on the certificate)
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -234,7 +265,6 @@ const Form = () => {
                   className="w-full p-3 rounded-md border uppercase border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   required
                 />
-            
               </div>
 
               {/* Phone Number */}
@@ -281,7 +311,6 @@ const Form = () => {
                   Same as Phone Number
                 </label>
               </div>
-
               {/* Country */}
               <div className="col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -289,7 +318,7 @@ const Form = () => {
                 </label>
                 <select
                   name="country"
-                  value={formData.country}
+                  value={formData.countryCode || ""} // Use isoCode for the selected value
                   onChange={handleChange}
                   className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   required
@@ -322,7 +351,7 @@ const Form = () => {
                   </option>
                   {states.map((state) => (
                     <option key={state.isoCode} value={state.isoCode}>
-                      {state.name}
+                      {state.name} {/* Save full state name */}
                     </option>
                   ))}
                 </select>
@@ -345,7 +374,7 @@ const Form = () => {
                   </option>
                   {cities.map((city) => (
                     <option key={city.name} value={city.name}>
-                      {city.name}
+                      {city.name} {/* Save full city name */}
                     </option>
                   ))}
                 </select>

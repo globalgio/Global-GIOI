@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 const BulkSection = () => {
   const [file, setFile] = useState(null);
@@ -126,6 +127,28 @@ const BulkSection = () => {
           </label>
         </div>
         <p className="text-gray-700 mt-4">Formats: .xls, .xlsx</p>
+        <p className="text-gray-700 mt-2">
+          See the process and video for guidance:{" "}
+          <Link
+            href="https://www.youtube.com/watch?v=YOUR_VIDEO_LINK"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
+          >
+            Watch here
+          </Link>
+        </p>
+        <p className="text-gray-700 mt-4">
+          For assistance, contact us at{" "}
+          <a
+            href="https://wa.me/919594402916"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
+          >
+            +91 959 440 2916
+          </a>
+        </p>
         {file && (
           <div className="mt-8">
             {uploading ? (

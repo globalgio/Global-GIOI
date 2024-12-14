@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { motion } from "framer-motion";
 
@@ -10,6 +10,38 @@ const VerifyCertificate = () => {
   const [loading, setLoading] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
+
+  // Motivational Taglines
+  const taglines = [
+    "Believe in yourself and all that you are!",
+    "Every step you take brings you closer to success.",
+    "Your hard work will pay off; keep going!",
+    "Dare to dream big and achieve greatness.",
+    "The future belongs to those who prepare for it today.",
+    "Mistakes are proof that you're trying.",
+    "Education is the key to unlocking your potential.",
+    "Great things never come from comfort zones.",
+    "Your journey is your story. Make it amazing!",
+    "Be fearless in the pursuit of what sets your soul on fire.",
+    "Small steps lead to big results.",
+    "You have the power to create a bright future.",
+    "Learning is a treasure that will follow its owner everywhere.",
+    "The harder you work, the luckier you get.",
+    "Stay positive, work hard, and make it happen.",
+  ];
+  const [currentTagline, setCurrentTagline] = useState(taglines[0]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTagline((prev) => {
+        const currentIndex = taglines.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % taglines.length;
+        return taglines[nextIndex];
+      });
+    }, 5000); // Change tagline every 5 seconds
+
+    return () => clearInterval(interval); // Clean up interval on unmount
+  }, [taglines]);
 
   const handleVerification = async (e) => {
     e.preventDefault();
@@ -35,7 +67,6 @@ const VerifyCertificate = () => {
       }
 
       const data = await response.json();
-    
 
       setIsVerified(true);
       setVerificationStatus("Certificate Verified Successfully!");
@@ -52,7 +83,7 @@ const VerifyCertificate = () => {
 
   const generateCertificate = async (data) => {
     try {
-      const templateUrl = "/gioi-certificate.pdf";
+      const templateUrl = "/GLOBAL INNOVATOR OLYMPIAD CERTIFICATE.pdf";
       const existingPdfBytes = await fetch(templateUrl).then((res) =>
         res.arrayBuffer()
       );
@@ -63,8 +94,10 @@ const VerifyCertificate = () => {
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
 
-      const nameX = 210;
-      const nameY = 580;
+      const nameX = 225;
+      const nameY = 590;
+      const schoolNameX = 230;
+      const schoolNameY = 565;
       const globalRankX = 335;
       const globalRankY = 455;
       const countryRankX = 338;
@@ -81,6 +114,15 @@ const VerifyCertificate = () => {
         x: nameX,
         y: nameY,
         size: 18,
+        font: boldFont,
+        color: rgb(0, 0, 0),
+      });
+
+      const schoolName = data.schoolname || "N/A";
+      firstPage.drawText(schoolName.toUpperCase(), {
+        x: schoolNameX,
+        y: schoolNameY,
+        size: 16,
         font: boldFont,
         color: rgb(0, 0, 0),
       });
@@ -141,11 +183,11 @@ const VerifyCertificate = () => {
   };
 
   return (
-    <section className="verify-section w-full flex items-center justify-center bg-[#f4f6f9] py-8 px-4">
-      <div className="w-full max-w-4xl bg-white rounded-3xl flex flex-col items-center p-6 md:p-8 lg:p-12 shadow-lg">
-        <div className="text-center mb-8">
+    <section className="verify-section w-full flex flex-col items-center justify-center bg-[#f4f6f9] py-8 px-4">
+      <div className="w-full max-w-4xl bg-white rounded-3xl flex flex-col items-center p-4 sm:p-6 md:p-8 lg:p-12 shadow-lg">
+        <div className="text-center mb-6">
           <motion.h1
-            className="text-2xl md:text-3xl font-bold text-[#106EB5]"
+            className="text-xl sm:text-2xl md:text-3xl font-bold text-[#106EB5]"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
@@ -158,9 +200,19 @@ const VerifyCertificate = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
-            Enter the certificate number to verify its authenticity.
+            Enter the Credential ID to verify its authenticity.
           </motion.p>
         </div>
+
+        {/* Tagline Section */}
+        <motion.div
+          className="text-center text-gray-700 font-semibold text-lg mt-6 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          "{currentTagline}"
+        </motion.div>
 
         <motion.form
           className="w-full max-w-md space-y-4"
@@ -174,7 +226,7 @@ const VerifyCertificate = () => {
               htmlFor="certificateId"
               className="block text-sm font-medium text-black"
             >
-              Certificate Number
+              Credential ID
             </label>
             <input
               type="text"
@@ -183,13 +235,13 @@ const VerifyCertificate = () => {
               onChange={(e) => setCertificateId(e.target.value)}
               required
               className="w-full px-4 py-2 border rounded-md mt-2 text-sm md:text-base"
-              placeholder="Enter the certificate number"
+              placeholder="Enter the Credential ID"
             />
           </div>
 
           <motion.button
             type="submit"
-            className="w-full py-3 text-white bg-[#106EB5] rounded-md mt-6 text-sm md:text-base"
+            className="w-full py-3 text-white bg-[#106EB5] rounded-md mt-4 text-sm md:text-base hover:bg-blue-600"
             disabled={loading}
             whileHover={{ scale: 1.03 }}
           >
@@ -199,7 +251,7 @@ const VerifyCertificate = () => {
 
         {verificationStatus && (
           <motion.div
-            className={`mt-4 text-center text-sm md:text-xl font-semibold ${
+            className={`mt-4 text-center text-sm md:text-lg font-semibold ${
               isVerified ? "text-green-500" : "text-red-500"
             }`}
             initial={{ opacity: 0, y: 30 }}
@@ -210,17 +262,8 @@ const VerifyCertificate = () => {
           </motion.div>
         )}
 
-        {isVerified && !pdfUrl && (
-          <motion.button
-            className="mt-6 py-3 px-8 bg-green-500 text-white rounded-md"
-            onClick={() => generateCertificate(certificateData)}
-          >
-            View Certificate
-          </motion.button>
-        )}
-
         {pdfUrl && (
-          <div className="mt-6 w-full">
+          <div className="mt-6 w-full text-center">
             <iframe
               src={pdfUrl}
               width="100%"
@@ -228,6 +271,24 @@ const VerifyCertificate = () => {
               className="rounded-md shadow-lg"
               title="Certificate Preview"
             ></iframe>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+              <a
+                href={`https://wa.me/?text=Check out my certificate: ${pdfUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 text-sm sm:text-base"
+              >
+                Share on WhatsApp
+              </a>
+              <a
+                href={pdfUrl}
+                download="Certificate.pdf"
+                className="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 text-sm sm:text-base"
+              >
+                Download & Share on Instagram
+              </a>
+            </div>
           </div>
         )}
       </div>

@@ -42,7 +42,6 @@ const Dashboard = () => {
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,7 +63,7 @@ const Dashboard = () => {
 
         const representative = userResponse.data.representative;
         setUserData(representative);
-        console.log(representative);
+     
         // Extract practice test counts
         const { practiceTestCounts } = userResponse.data;
         setPracticeTestCounts({
@@ -125,6 +124,8 @@ const Dashboard = () => {
     };
 
     fetchData();
+    const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds
+    return () => clearInterval(intervalId); // Cleanup on unmount
   }, [router, selectedStandard]);
 
   const handleLogout = () => {
@@ -203,14 +204,6 @@ const Dashboard = () => {
             </h4>
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
-              }`}
-              onClick={() => handleTabClick("verifyCertificate")}
-            >
-              Verify Certificate
-            </h4>
-            <h4
-              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
                 activeTab === "profile" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
               }`}
               onClick={() => handleTabClick("profile")}
@@ -223,7 +216,7 @@ const Dashboard = () => {
               }`}
               onClick={() => handleTabClick("students")}
             >
-             Enrolled Students
+              Enrolled Students
             </h4>
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
@@ -232,6 +225,14 @@ const Dashboard = () => {
               onClick={() => handleTabClick("bulkUpload")}
             >
               Batch Enrollment
+            </h4>
+            <h4
+              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
+                activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+              }`}
+              onClick={() => handleTabClick("verifyCertificate")}
+            >
+              Verify Certificate
             </h4>
             <button
               className="px-3 py-1 bg-red-600 text-white rounded-2xl font-bold text-sm"
@@ -256,14 +257,6 @@ const Dashboard = () => {
               </li>
               <li
                 className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
-                }`}
-                onClick={() => handleTabClick("verifyCertificate")}
-              >
-                Verify Certificate
-              </li>
-              <li
-                className={`px-4 py-2 font-bold cursor-pointer ${
                   activeTab === "profile" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
                 }`}
                 onClick={() => handleTabClick("profile")}
@@ -285,6 +278,14 @@ const Dashboard = () => {
                 onClick={() => handleTabClick("bulkUpload")}
               >
                 Bulk Upload
+              </li>
+              <li
+                className={`px-4 py-2 font-bold cursor-pointer ${
+                  activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                }`}
+                onClick={() => handleTabClick("verifyCertificate")}
+              >
+                Verify Certificate
               </li>
               <li>
                 <button

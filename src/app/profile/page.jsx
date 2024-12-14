@@ -1,24 +1,38 @@
 "use client";
+import { ImProfile } from "react-icons/im";
+import { Country } from "country-state-city";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { MdEmail, MdPhone, MdSchool, MdSd } from "react-icons/md";
+import { MdSd } from "react-icons/md";
 import ReactCountryFlag from "react-country-flag";
 import Navbar from "@/components/layouts/navbar/navbar";
 import Footer from "@/components/layouts/footer/footer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   FaAdjust,
   FaCannabis,
   FaPhoneAlt,
   FaWhatsapp,
   FaMedal,
+  FaEdit,
+  FaSignOutAlt,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa";
 import { BiSolidUserAccount } from "react-icons/bi";
 import { FaSchoolCircleCheck } from "react-icons/fa6";
 import Link from "next/link";
 import Notifications from "@/components/notification/Notifications";
 import Cursor from "@/components/cursor/Cursor";
-
+const getCountryCode = (countryName) => {
+  const country = Country.getAllCountries().find(
+    (c) => c.name.toLowerCase() === countryName.toLowerCase()
+  );
+  return country ? country.isoCode : null;
+};
 const Profile = () => {
   const [data, setData] = useState(null);
   const [rankings, setRankings] = useState({
@@ -33,11 +47,16 @@ const Profile = () => {
       state: { rank: "TBD", category: "Participate in Live Test" },
     },
   });
+  // Inside your component
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [testCounts, setTestCounts] = useState({ mock: 0, live: 0 });
   const [certificateCodes, setCertificateCodes] = useState([]); // Added for certificates
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const [editData, setEditData] = useState({});
+  const router = useRouter();
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -135,6 +154,70 @@ const Profile = () => {
     fetchUserProfile();
   }, [router]);
 
+  // When edit modal is opened, pre-fill the form with existing data
+  const openEditModal = () => {
+    setEditData({
+      uid: data.uid, // Include uid
+      name: data.name,
+      username: data.username,
+      PhoneNumber: data.PhoneNumber,
+      teacherPhoneNumber: data.teacherPhoneNumber,
+      whatsappNumber: data.whatsappNumber,
+      standard: data.standard,
+      schoolName: data.schoolName,
+      country: data.country,
+      state: data.state,
+      city: data.city,
+      password: "", // New field
+      confirmPassword: "", // New field
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You need to be logged in to update your profile.");
+        return;
+      }
+
+      // Ensure `uid` and all necessary fields are present
+      const requestBody = {
+        uid: editData.uid, // Make sure the `uid` is included
+        ...editData, // Include other editable fields like name, username, etc.
+      };
+      console.log(editData);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-profile`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update profile.");
+      }
+
+      const updatedData = await response.json();
+
+      setData(updatedData.user);
+      setIsEditModalOpen(false);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error.message);
+      toast.error(
+        "There was an error updating your profile. Please try again."
+      );
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -177,12 +260,29 @@ const Profile = () => {
       )}
     </div>
   );
+  const validateForm = () => {
+    const errors = [];
+    if (!editData.name) errors.push("Name is required.");
+    if (!/^[0-9]{10}$/.test(editData.PhoneNumber))
+      errors.push("Enter a valid 10-digit phone number.");
+    if (!editData.password) errors.push("Password is required.");
+    if (editData.password !== editData.confirmPassword)
+      errors.push("Passwords do not match.");
+    if (!editData.standard) errors.push("Standard is required.");
+
+    if (errors.length > 0) {
+      console.log("Validation Errors:", errors);
+      return false;
+    }
+    return true;
+  };
 
   return (
     <>
       <Cursor />
       <Navbar />
       <div className="container mx-auto mt-8 px-6">
+        <ToastContainer position="top-right" autoClose={3000} />
         <div className="bg-white shadow-xl rounded-lg overflow-hidden w-full max-w-4xl mx-auto">
           {/* Profile Header */}
           <div className="bg-[#2563EB] py-6 px-6 text-white">
@@ -195,33 +295,165 @@ const Profile = () => {
                   <p className="text-lg mt-2 font-bold flex items-center uppercase">
                     {data.name}
                     {data.country && (
-                      <ReactCountryFlag
-                        countryCode={data.country}
-                        svg
-                        style={{
-                          width: "1.5em",
-                          height: "1.5em",
-                          marginLeft: "0.5em",
-                        }}
-                        title={data.country}
-                      />
+                      <span className="hidden md:inline">
+                        <ReactCountryFlag
+                          countryCode={getCountryCode(data.country)}
+                          svg
+                          style={{
+                            width: "1.5em",
+                            height: "1.5em",
+                            marginLeft: "0.5em",
+                          }}
+                          title={data.country}
+                        />
+                      </span>
                     )}
                   </p>
                 </div>
                 <p className="text-lg mt-2">Student</p>
               </div>
-              <button
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  router.push("/gio-profile");
-                }}
-                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-              >
-                Logout
-              </button>
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                      onClick={openEditModal}
+                      className="bg-yellow-500 text-white py-3 px-6 rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 flex items-center justify-center w-full sm:w-auto"
+                    >
+                      <FaEdit className="mr-2 text-lg" />
+                      <span className="font-semibold">Edit </span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        router.push("/gio-profile");
+                      }}
+                      className="bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300 flex items-center justify-center w-full sm:w-auto"
+                    >
+                      <FaSignOutAlt className="mr-2 text-lg" />
+                      <span className="font-semibold">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          {/* Edit Modal */}
+          {isEditModalOpen && (
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+              <div className="bg-white rounded-lg w-full max-w-2xl p-4 sm:p-6 shadow-lg relative overflow-auto max-h-screen">
+                <h2 className="text-xl sm:text-2xl font-bold text-blue-600 mb-4">
+                  Edit Profile
+                </h2>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleUpdateProfile();
+                  }}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Render Editable Fields */}
+                    {[
+                      "name",
+                      "username",
+                      "PhoneNumber",
+                      "teacherPhoneNumber",
+                      "whatsappNumber",
+                      "standard",
+                      "schoolName",
+                      "country",
+                      "state",
+                      "city",
+                    ].map((field) => (
+                      <div key={field}>
+                        <label className="block text-gray-700 font-semibold mb-1">
+                          {field.charAt(0).toUpperCase() +
+                            field.slice(1).replace(/([A-Z])/g, " $1")}
+                        </label>
+                        <input
+                          type="text"
+                          value={editData[field] || ""}
+                          onChange={(e) =>
+                            setEditData({
+                              ...editData,
+                              [field]: e.target.value,
+                            })
+                          }
+                          className="w-full p-2 border rounded-md"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {/* Password Field */}
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={editData.password || ""}
+                        onChange={(e) =>
+                          setEditData({ ...editData, password: e.target.value })
+                        }
+                        className="w-full p-2 border rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-2 flex items-center text-gray-600 hover:text-gray-800"
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    </div>
+                  </div>
 
+                  {/* Confirm Password Field */}
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={editData.confirmPassword || ""}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            confirmPassword: e.target.value,
+                          })
+                        }
+                        className="w-full p-2 border rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute inset-y-0 right-2 flex items-center text-gray-600 hover:text-gray-800"
+                      >
+                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex justify-end mt-6 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditModalOpen(false)}
+                      className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
           {/* Main Content */}
           <div className="p-6 space-y-6">
             {/* Contact Information */}
@@ -234,7 +466,7 @@ const Profile = () => {
                   {data.country && (
                     <div className="flex items-center gap-3">
                       <ReactCountryFlag
-                        countryCode={data.country}
+                        countryCode={getCountryCode(data.country)}
                         svg
                         style={{ width: "1.5em", height: "1.5em" }}
                         title={data.country}
@@ -304,8 +536,14 @@ const Profile = () => {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <FaSchoolCircleCheck className="w-5 h-5 text-[#2563EB]" />
+                    <ImProfile className="w-5 h-5 text-[#2563EB]" />
                     <span className="text-sm text-gray-600">
+                      {data.username}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <FaSchoolCircleCheck className="w-5 h-5 text-[#2563EB]" />
+                    <span className="text-sm text-gray-600 uppercase">
                       {data.schoolName}
                     </span>
                   </div>
@@ -333,16 +571,16 @@ const Profile = () => {
             {/* Certificate Codes */}
             <div className="text-sm text-gray-600 mt-4 bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md shadow-md transition-transform transform hover:scale-105">
               <span className="font-semibold text-blue-600">
-                ✨ Final Test Certificate Code:
+                ✨ Final Test Certificate Credential ID:
               </span>
               {certificateCodes && certificateCodes.length > 0 ? (
                 <div className="text-gray-800 text-sm mt-2">
-                  Your Certificate Code:{" "}
+                  Your Certificate Credential ID:{" "}
                   <span className="font-semibold">{certificateCodes}</span>
                 </div>
               ) : (
                 <div className="text-gray-500 text-sm mt-2">
-                  No certificate code available yet.
+                  No Certificate Credential ID available yet.
                 </div>
               )}
             </div>
