@@ -9,14 +9,16 @@ const Hero = () => {
       <div className="md:w-1/2 w-full text-center md:text-left mb-10 md:mb-0">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-black">
           The Prestigious <br />
-          Online Olympiad<br />
-          Exams From<br />
+          Online Olympiad
+          <br />
+          Exams From
+          <br />
           <span className="text-blue-600">Class V to X</span>
         </h1>
         <p className="mt-6 text-lg sm:text-xl lg:text-2xl text-gray-700">
-          The Global Innovator Olympiad (GIO), organized by ISRC, is an
-          international competition where students apply creativity and
-          problem-solving skills to real-world challenges.
+          The Global Innovator Olympiad (GIO), organized by{" "}
+          <a href="https://www.isrc.org.in" target="_blank" rel="noopener noreferrer"><strong>ISRC</strong></a>, is an international competition where students
+          apply creativity and problem-solving skills to real-world challenges.
         </p>
 
         {/* "What is GIO" Heading */}
@@ -25,8 +27,8 @@ const Hero = () => {
             Registration Video
           </h3> */}
 
-          {/* YouTube Video Button with Icon in a Rectangle Box */}
-          {/* <a
+        {/* YouTube Video Button with Icon in a Rectangle Box */}
+        {/* <a
             href="https://youtu.be/YjJn99qnWoM" // Replace with your YouTube link
             target="_blank"
             rel="noopener noreferrer"

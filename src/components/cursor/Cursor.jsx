@@ -35,8 +35,7 @@ const Cursor = () => {
   return (
     <div
       ref={cursorRef}
-      className="cursor w-3 h-3 bg-[#2563eb] fixed rounded-full pointer-events-none z-[99999] mix-blend-difference hidden md:block"
-      style={{ display: 'none' }} // Ensure cursor is not visible on mobile devices
+      className="cursor w-3 h-3 bg-[#2563eb] fixed rounded-full pointer-events-none z-[99999] mix-blend-difference hidden lg:block"
     />
   );
 };

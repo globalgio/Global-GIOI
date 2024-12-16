@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { motion } from "framer-motion";
 
@@ -10,38 +10,6 @@ const VerifyCertificate = () => {
   const [loading, setLoading] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
-
-  // Motivational Taglines
-  const taglines = [
-    "Believe in yourself and all that you are!",
-    "Every step you take brings you closer to success.",
-    "Your hard work will pay off; keep going!",
-    "Dare to dream big and achieve greatness.",
-    "The future belongs to those who prepare for it today.",
-    "Mistakes are proof that you're trying.",
-    "Education is the key to unlocking your potential.",
-    "Great things never come from comfort zones.",
-    "Your journey is your story. Make it amazing!",
-    "Be fearless in the pursuit of what sets your soul on fire.",
-    "Small steps lead to big results.",
-    "You have the power to create a bright future.",
-    "Learning is a treasure that will follow its owner everywhere.",
-    "The harder you work, the luckier you get.",
-    "Stay positive, work hard, and make it happen.",
-  ];
-  const [currentTagline, setCurrentTagline] = useState(taglines[0]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTagline((prev) => {
-        const currentIndex = taglines.indexOf(prev);
-        const nextIndex = (currentIndex + 1) % taglines.length;
-        return taglines[nextIndex];
-      });
-    }, 5000); // Change tagline every 5 seconds
-
-    return () => clearInterval(interval); // Clean up interval on unmount
-  }, [taglines]);
 
   const handleVerification = async (e) => {
     e.preventDefault();
@@ -204,31 +172,6 @@ const VerifyCertificate = () => {
           </motion.p>
         </div>
 
-        {/* Tagline Section */}
-        <motion.div
-          className="text-center text-gray-700 font-semibold text-lg mt-6 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
-          "{currentTagline}"
-        </motion.div>
-        {/* Video Link */}
-        <motion.div
-          className="text-center mt-4 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
-        >
-          <a
-            href="https://www.youtube.com/watch?v=yzqs5i_aASM" // Replace with your video link
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm md:text-base text-blue-600 font-semibold hover:underline"
-          >
-            📹 Watch how to verify your certificate
-          </a>
-        </motion.div>
         <motion.form
           className="w-full max-w-md space-y-4"
           onSubmit={handleVerification}

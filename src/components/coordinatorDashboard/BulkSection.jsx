@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 const BulkSection = () => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -13,16 +12,16 @@ const BulkSection = () => {
     if (selectedFile) {
       const fileType = selectedFile.name.split(".").pop();
       if (!["xls", "xlsx"].includes(fileType)) {
-        toast.error("Invalid file format. Please upload an Excel file.");
+        alert("Invalid file format. Please upload an Excel file.");
         return;
       }
       if (selectedFile.size > 20 * 1024 * 1024) {
         // 20MB limit
-        toast.error("File size exceeds the 20MB limit.");
+        alert("File size exceeds the 20MB limit.");
         return;
       }
       setFile(selectedFile);
-      toast.success(`${selectedFile.name} added for upload.`);
+      alert(`${selectedFile.name} added for upload.`);
     }
   };
 
@@ -38,7 +37,7 @@ const BulkSection = () => {
 
   const handleFileUpload = async () => {
     if (!file) {
-      toast.error("Please select a file to upload.");
+      alert("Please select a file to upload.");
       return;
     }
 
@@ -64,16 +63,16 @@ const BulkSection = () => {
       );
 
       if (response.status === 200) {
-        toast.success("File uploaded successfully!");
+        alert("File uploaded successfully!");
         // Reset the input after upload is complete
         setFile(null);
         setUploadProgress(0);
       } else {
-        toast.error("File upload failed. Please try again.");
+        alert("File upload failed. Please try again.");
       }
     } catch (error) {
       console.error("File upload error:", error);
-      toast.error("An error occurred during file upload.");
+      alert("An error occurred during file upload.");
     } finally {
       setUploading(false);
     }
@@ -81,7 +80,6 @@ const BulkSection = () => {
 
   return (
     <div className="p-8 bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex items-center justify-center">
-      <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white shadow-2xl rounded-2xl p-10 text-center max-w-lg w-full">
         <h2 className="text-4xl font-extrabold text-gray-900 mb-8">
           Bulk Upload
@@ -132,7 +130,7 @@ const BulkSection = () => {
         <p className="text-gray-700 mt-2">
           See the process and video for guidance:{" "}
           <Link
-            href="https://www.youtube.com/watch?v=6B8zIbeHcK8"
+            href="https://www.youtube.com/watch?v=YOUR_VIDEO_LINK"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 underline"

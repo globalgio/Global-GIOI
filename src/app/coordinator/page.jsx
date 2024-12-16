@@ -1,6 +1,7 @@
 "use client";
 
-import Form from "@/components/coordinator/Form";
+import CoordinatorRegisterForm from "@/components/coordinator/CoordinatorRegistration";
+
 import Cursor from "@/components/cursor/Cursor";
 import Footer from "@/components/layouts/footer/footer";
 import Navbar from "@/components/layouts/navbar/navbar";
@@ -10,7 +11,7 @@ const Page = () => {
     <div>
       <Cursor />
       <Navbar />
-      <Form />
+      <CoordinatorRegisterForm />
       <Footer />
     </div>
   );

@@ -119,7 +119,9 @@ const AuthForm = () => {
 
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
-            {activeTab === "login" ? "Take Charge" : "Activate Your School Dashboard"}
+            {activeTab === "login"
+              ? "Take Charge"
+              : "Activate Your School Dashboard"}
           </h1>
           <p className="text-gray-600">
             {activeTab === "login"
@@ -127,6 +129,20 @@ const AuthForm = () => {
               : "Sign up to manage your school data effortlessly."}
           </p>
         </div>
+
+        {/* Add YouTube Video Link */}
+        {activeTab === "login" && (
+          <div className="w-full flex items-center justify-center mb-5">
+            <a
+              href="https://www.youtube.com/watch?v=8dpts2MzKg4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 font-semibold hover:underline"
+            >
+              📹 Watch how it&apos;s done
+            </a>
+          </div>
+        )}
 
         <div className="flex justify-center mb-6">
           <button

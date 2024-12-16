@@ -63,7 +63,7 @@ const Dashboard = () => {
 
         const representative = userResponse.data.representative;
         setUserData(representative);
-     
+
         // Extract practice test counts
         const { practiceTestCounts } = userResponse.data;
         setPracticeTestCounts({
@@ -110,7 +110,10 @@ const Dashboard = () => {
 
         if (testCountsResponse.status === 200) {
           const { mock, live } = testCountsResponse.data;
-          setTotalMockTests(mock); // Set total practice tests (mock)
+
+          setTotalMockTests(mock);
+
+          // Set total practice tests (mock)
           setTotalLiveTests(live); // Set total final tests (live)
         }
 
@@ -196,7 +199,9 @@ const Dashboard = () => {
           <div className="hidden md:flex items-center gap-5">
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "home" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                activeTab === "home"
+                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                  : ""
               }`}
               onClick={() => handleTabClick("home")}
             >
@@ -204,7 +209,9 @@ const Dashboard = () => {
             </h4>
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "profile" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                activeTab === "profile"
+                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                  : ""
               }`}
               onClick={() => handleTabClick("profile")}
             >
@@ -212,7 +219,9 @@ const Dashboard = () => {
             </h4>
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "students" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                activeTab === "students"
+                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                  : ""
               }`}
               onClick={() => handleTabClick("students")}
             >
@@ -220,7 +229,9 @@ const Dashboard = () => {
             </h4>
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "bulkUpload" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                activeTab === "bulkUpload"
+                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                  : ""
               }`}
               onClick={() => handleTabClick("bulkUpload")}
             >
@@ -228,7 +239,9 @@ const Dashboard = () => {
             </h4>
             <h4
               className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                activeTab === "verifyCertificate"
+                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                  : ""
               }`}
               onClick={() => handleTabClick("verifyCertificate")}
             >
@@ -249,7 +262,9 @@ const Dashboard = () => {
             <ul className="space-y-4">
               <li
                 className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "home" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                  activeTab === "home"
+                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                    : ""
                 }`}
                 onClick={() => handleTabClick("home")}
               >
@@ -257,7 +272,9 @@ const Dashboard = () => {
               </li>
               <li
                 className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "profile" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                  activeTab === "profile"
+                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                    : ""
                 }`}
                 onClick={() => handleTabClick("profile")}
               >
@@ -265,7 +282,9 @@ const Dashboard = () => {
               </li>
               <li
                 className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "students" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                  activeTab === "students"
+                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                    : ""
                 }`}
                 onClick={() => handleTabClick("students")}
               >
@@ -273,7 +292,9 @@ const Dashboard = () => {
               </li>
               <li
                 className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "bulkUpload" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                  activeTab === "bulkUpload"
+                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                    : ""
                 }`}
                 onClick={() => handleTabClick("bulkUpload")}
               >
@@ -281,7 +302,9 @@ const Dashboard = () => {
               </li>
               <li
                 className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "verifyCertificate" ? "border-b-2 border-[#2563EB] text-[#2563EB]" : ""
+                  activeTab === "verifyCertificate"
+                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
+                    : ""
                 }`}
                 onClick={() => handleTabClick("verifyCertificate")}
               >
@@ -300,9 +323,7 @@ const Dashboard = () => {
         )}
 
         {/* Render Section Based on Active Tab */}
-        {activeTab === "verifyCertificate" && (
-        <VerifyCertificate />
-        )}
+        {activeTab === "verifyCertificate" && <VerifyCertificate />}
         {activeTab === "profile" && (
           <DashboardSection
             userData={userData}

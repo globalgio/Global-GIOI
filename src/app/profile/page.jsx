@@ -21,6 +21,8 @@ import {
   FaSignOutAlt,
   FaEye,
   FaEyeSlash,
+  FaRegCopy,
+  FaPlayCircle,
 } from "react-icons/fa";
 import { BiSolidUserAccount } from "react-icons/bi";
 import { FaSchoolCircleCheck } from "react-icons/fa6";
@@ -49,6 +51,8 @@ const Profile = () => {
   });
   // Inside your component
   const [showPassword, setShowPassword] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [testCounts, setTestCounts] = useState({ mock: 0, live: 0 });
   const [certificateCodes, setCertificateCodes] = useState([]); // Added for certificates
@@ -187,7 +191,7 @@ const Profile = () => {
         uid: editData.uid, // Make sure the `uid` is included
         ...editData, // Include other editable fields like name, username, etc.
       };
-      console.log(editData);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/gio/update-profile`,
         {
@@ -315,13 +319,16 @@ const Profile = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Edit Button */}
                     <button
                       onClick={openEditModal}
                       className="bg-yellow-500 text-white py-3 px-6 rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 flex items-center justify-center w-full sm:w-auto"
                     >
                       <FaEdit className="mr-2 text-lg" />
-                      <span className="font-semibold">Edit </span>
+                      <span className="font-semibold">Edit</span>
                     </button>
+
+                    {/* Logout Button */}
                     <button
                       onClick={() => {
                         localStorage.removeItem("token");
@@ -332,6 +339,17 @@ const Profile = () => {
                       <FaSignOutAlt className="mr-2 text-lg" />
                       <span className="font-semibold">Logout</span>
                     </button>
+
+                    {/* Watch Overview Button */}
+                    <a
+                      href="https://www.youtube.com/watch?v=OM7GglxMnJM" // Replace with your video link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-900 transition duration-300 flex items-center justify-center w-full sm:w-auto"
+                    >
+                      <FaPlayCircle className="mr-2 text-lg" />
+                      <span className="font-semibold">Watch Overview</span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -574,9 +592,26 @@ const Profile = () => {
                 ✨ Final Test Certificate Credential ID:
               </span>
               {certificateCodes && certificateCodes.length > 0 ? (
-                <div className="text-gray-800 text-sm mt-2">
-                  Your Certificate Credential ID:{" "}
+                <div className="text-gray-800 text-sm mt-2 flex items-center gap-2 relative">
+                  <span>Your Certificate Credential ID:</span>
                   <span className="font-semibold">{certificateCodes}</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(certificateCodes);
+                      setTooltipVisible(true);
+                      setTimeout(() => setTooltipVisible(false), 2000); // Tooltip visible for 2 seconds
+                    }}
+                    className="text-blue-600 hover:text-blue-800 flex items-center relative"
+                    title="Copy to clipboard"
+                  >
+                    <FaRegCopy className="ml-2" size={18} />
+                  </button>
+                  {/* Tooltip */}
+                  {tooltipVisible && (
+                    <span className="absolute right-0 bg-blue-600 text-white text-xs py-1 px-2 rounded-md shadow-lg">
+                      Copied!
+                    </span>
+                  )}
                 </div>
               ) : (
                 <div className="text-gray-500 text-sm mt-2">

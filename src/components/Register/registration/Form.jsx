@@ -168,6 +168,20 @@ const Form = () => {
             : "🌟 Unleash your potential and join the global stage of innovation. Register now for the GIO and make your mark! 🌟"}
         </p>
 
+        {/* Video Link for Registration */}
+        {!isLogin && (
+          <div className="text-center mb-6">
+            <a
+              href="https://www.youtube.com/watch?v=CKCYNEJmjK4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:underline font-semibold"
+            >
+              📹 Watch a step-by-step guide to registration
+            </a>
+          </div>
+        )}
+
         <div className="text-center mb-6">
           <button
             onClick={() => setIsLogin(!isLogin)}
