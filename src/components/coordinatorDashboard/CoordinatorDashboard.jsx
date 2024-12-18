@@ -7,8 +7,8 @@ import { IoMdClose } from "react-icons/io"; // Close Icon
 
 // Import the separate components you created
 import CoordinatorDashboardSection from "./CoordinatorDashboardSection";
-import StudentsSection from "../coordinatorDashboard/StudentSection";
-import BulkSection from "../coordinatorDashboard/BulkSection";
+import StudentsSection from "./StudentSection";
+import BulkSection from "./BulkSection";
 import ProfileOverviewSection from "./ProfileOverviewSection"; // Import ProfileOverviewSection
 
 const CoordinatorDashboard = () => {
@@ -47,6 +47,9 @@ const CoordinatorDashboard = () => {
           return;
         }
 
+        // Log the API hostname for debugging
+        console.log("API Hostname:", process.env.NEXT_PUBLIC_API_HOSTNAME);
+
         // Fetch partner profile
         const profileRes = await axios.get(
           `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/coordinator/profile`,
@@ -70,6 +73,7 @@ const CoordinatorDashboard = () => {
           setStudents(fetchedStudents);
           setFilteredStudents(fetchedStudents);
         } else {
+          // If no students are found, set students to an empty array
           setStudents([]);
           setFilteredStudents([]);
         }
@@ -84,7 +88,10 @@ const CoordinatorDashboard = () => {
             err.response.data
           );
           if (err.response.status === 404) {
-            setError("Endpoint not found. Please contact support.");
+            // Assuming 404 occurs when there are no students
+            console.warn("No students found for this coordinator.");
+            setStudents([]);
+            setFilteredStudents([]);
           } else if (err.response.status === 401) {
             setError("Unauthorized. Please log in again.");
             router.push("/coordinator/login");
@@ -106,11 +113,12 @@ const CoordinatorDashboard = () => {
     };
 
     fetchData();
-    
-    const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds
-    return () => clearInterval(intervalId); // Cleanup on unmount
-
   }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("coordinatorToken");
+    router.push("/coordinator");
+  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -205,11 +213,12 @@ const CoordinatorDashboard = () => {
               />
             </div>
             <div>
-              <h1 className=" text-lg md:text-2xl font-bold">
+              <h1 className="text-lg md:text-2xl font-bold">
                 Global Innovator Olympiad
               </h1>
-              <h1 className=" text-lg md:text-2xl font-bold text-[#2563EB]">
-                Dashboard
+              <h1 className="text-lg md:text-2xl font-bold text-[#2563EB]">
+                Partner Program:{" "}
+                {userData && userData.name ? userData.name : "Loading..."}
               </h1>
             </div>
           </div>
@@ -228,37 +237,37 @@ const CoordinatorDashboard = () => {
             )}
           </div>
           {/* Full Navbar for Desktop */}
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden md:flex items-center gap-10">
             <h4
-              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "profile"
-                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
-                  : ""
+              className={`px-5 py-2 rounded-2xl font-bold transition-colors duration-300 cursor-pointer ${
+                activeTab === "profile" ? "bg-[#2563EB] text-white" : ""
               }`}
               onClick={() => handleTabClick("profile")}
             >
               Profile Overview
             </h4>
             <h4
-              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "students"
-                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
-                  : ""
+              className={`px-5 py-2 rounded-2xl font-bold transition-colors duration-300 cursor-pointer ${
+                activeTab === "students" ? "bg-[#2563EB] text-white" : ""
               }`}
               onClick={() => handleTabClick("students")}
             >
               Enrolled Students
             </h4>
             <h4
-              className={`px-3 py-1 font-bold transition-colors duration-300 cursor-pointer text-sm ${
-                activeTab === "bulkUpload"
-                  ? "border-b-2 border-[#2563EB] text-[#2563EB]"
-                  : ""
+              className={`px-5 py-2 rounded-2xl font-bold transition-colors duration-300 cursor-pointer ${
+                activeTab === "bulkUpload" ? "bg-[#2563EB] text-white" : ""
               }`}
               onClick={() => handleTabClick("bulkUpload")}
             >
               Batch Enrollment
             </h4>
+            <button
+              className="px-5 py-2 bg-red-600 text-white rounded-2xl font-bold"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
           </div>
         </nav>
 
@@ -267,34 +276,36 @@ const CoordinatorDashboard = () => {
           <div className="absolute top-[15%] left-0 w-full bg-white shadow-lg z-10 p-5 md:hidden">
             <ul className="space-y-4">
               <li
-                className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "profile"
-                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
-                    : ""
+                className={`px-4 py-2 rounded-lg font-bold cursor-pointer ${
+                  activeTab === "profile" ? "bg-[#2563EB] text-white" : ""
                 }`}
                 onClick={() => handleTabClick("profile")}
               >
-                Profile
+                Profile Overview
               </li>
               <li
-                className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "students"
-                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
-                    : ""
+                className={`px-4 py-2 rounded-lg font-bold cursor-pointer ${
+                  activeTab === "students" ? "bg-[#2563EB] text-white" : ""
                 }`}
                 onClick={() => handleTabClick("students")}
               >
-                Students
+                Enrolled Students
               </li>
               <li
-                className={`px-4 py-2 font-bold cursor-pointer ${
-                  activeTab === "bulkUpload"
-                    ? "border-b-2 border-[#2563EB] text-[#2563EB]"
-                    : ""
+                className={`px-4 py-2 rounded-lg font-bold cursor-pointer ${
+                  activeTab === "bulkUpload" ? "bg-[#2563EB] text-white" : ""
                 }`}
                 onClick={() => handleTabClick("bulkUpload")}
               >
-                Bulk Upload
+                Batch Enrollment
+              </li>
+              <li>
+                <button
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-bold"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
               </li>
             </ul>
           </div>

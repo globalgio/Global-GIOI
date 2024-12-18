@@ -57,81 +57,106 @@ const Results = () => {
   }, []);
 
   const downloadPDF = () => {
-    const userName = localStorage.getItem("userName") || "Participant"; // Get user's name
-    const organization = "Global Innovator Olympiad"; // Organization name
-
+    const organization = "Global Innovator Olympiad";
+    const motivationalTagline =
+      (score / total) * 100 >= 90
+        ? "Outstanding Performance! Keep up the fantastic work!"
+        : (score / total) * 100 >= 75
+        ? "Great Job! You're on the path to success!"
+        : (score / total) * 100 >= 50
+        ? "Good Effort! Keep pushing for greatness!"
+        : "Don't give up! Every step is a step forward.";
+  
     const doc = new jsPDF();
-
-    // Add a banner
-    doc.setFillColor(38, 99, 235); // Blue color
-    doc.rect(0, 0, 210, 30, "F"); // Fill a rectangle (full-width banner)
-    doc.setFontSize(20);
-    doc.setTextColor(255, 255, 255); // White text
-    doc.text(organization, 105, 12, { align: "center" }); // Organization Name
-    doc.setFontSize(14);
-    doc.text(`Certificate of Achievement`, 105, 20, { align: "center" });
-
-    // Add user name
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0); // Black text
-    doc.text(`Awarded to: ${userName}`, 105, 40, { align: "center" });
-
-    // Add a score summary
-    doc.setFontSize(14);
-    doc.text(`Score: ${score} / ${total}`, 10, 60);
-    doc.text(`Percentage: ${((score / total) * 100).toFixed(2)}%`, 10, 70);
-
-    // Add a divider
-    doc.setDrawColor(0, 0, 0); // Black color
-    doc.line(10, 75, 200, 75); // Draw a horizontal line
-
-    // Add question analysis
-    doc.setFontSize(12);
-    doc.text("Question Analysis:", 10, 85);
-    let yPosition = 95; // Initial Y-position for question analysis
-    questions.forEach((question, index) => {
-      doc.setTextColor(0, 0, 0); // Black text
-      doc.text(`Q${index + 1}: ${question.question}`, 10, yPosition);
-      yPosition += 10;
-
-      // Correct Answer
-      doc.setTextColor(34, 139, 34); // Green text
-      doc.text(`Correct Answer: ${question.answer}`, 20, yPosition);
-      yPosition += 10;
-
-      // Your Answer
-      const userAnswer = selectedAnswers[index] || "Not Answered";
-      const isCorrect = userAnswer === question.answer;
-      doc.setTextColor(
-        isCorrect ? 34 : 220,
-        isCorrect ? 139 : 20,
-        isCorrect ? 34 : 60
-      ); // Green for correct, Red for incorrect
-      doc.text(`Your Answer: ${userAnswer}`, 20, yPosition);
-      yPosition += 10;
-
-      // Status
-      doc.setTextColor(0, 0, 0); // Black text
-      doc.text(`Status: ${isCorrect ? "Correct" : "Incorrect"}`, 20, yPosition);
-      yPosition += 15;
-
-      // Page Break
-      if (yPosition > 270) {
+  
+    const firstPageImg = new Image();
+    firstPageImg.src = "/resultpage.jpg"; // First page background
+  
+    const secondPageImg = new Image();
+    secondPageImg.src = "/resultsndpage.jpg"; // Second page background
+  
+    firstPageImg.onload = () => {
+      // First Page
+      doc.addImage(firstPageImg, "JPEG", 0, 0, 210, 297);
+  
+      // Add Score and Motivational Tagline
+      doc.setFontSize(26);
+      doc.setTextColor(0, 51, 102);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Your Score: ${score} / ${total}`, 105, 130, { align: "center" });
+  
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `Percentage: ${((score / total) * 100).toFixed(2)}%`,
+        105,
+        145,
+        { align: "center" }
+      );
+  
+      doc.setFontSize(16);
+      doc.setTextColor(0, 102, 0);
+      doc.setFont("times", "italic");
+      doc.text(motivationalTagline, 105, 165, { align: "center" });
+  
+      // Add "Question Analysis" Title Below
+      doc.setFontSize(20);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont("helvetica", "bold");
+      doc.text("Question Analysis", 105, 190, { align: "center" });
+  
+      let yPosition = 200; // Start of Question Analysis
+  
+      const addNewPage = () => {
         doc.addPage();
-        yPosition = 10;
-      }
-    });
-
-    // Footer with branding
-    doc.setFontSize(10);
-    doc.setTextColor(128, 128, 128); // Gray text
-    doc.text(`${organization} - Empowering Minds for Innovation`, 105, 290, {
-      align: "center",
-    });
-
-    // Save the PDF
-    doc.save(`${userName}-quiz-results.pdf`);
+        doc.addImage(secondPageImg, "JPEG", 0, 0, 210, 297);
+        yPosition = 30; // Reset position for new page
+      };
+  
+      // Load Second Page Background and Start Plotting Content
+      secondPageImg.onload = () => {
+        questions.forEach((question, index) => {
+          // Check if content exceeds page height
+          if (yPosition > 270) addNewPage();
+  
+          // Question
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.setFont("helvetica", "normal");
+          doc.text(`Q${index + 1}: ${question.question}`, 20, yPosition);
+          yPosition += 10;
+  
+          // Correct Answer
+          doc.setTextColor(34, 139, 34); // Green
+          doc.text(`Correct Answer: ${question.answer}`, 30, yPosition);
+          yPosition += 10;
+  
+          // User Answer
+          const userAnswer = selectedAnswers[index] || "Not Answered";
+          const isCorrect = userAnswer === question.answer;
+          doc.setTextColor(
+            isCorrect ? 34 : 220,
+            isCorrect ? 139 : 20,
+            isCorrect ? 34 : 60
+          ); // Green for correct, Red for incorrect
+          doc.text(`Your Answer: ${userAnswer}`, 30, yPosition);
+          yPosition += 15; // Extra spacing
+        });
+  
+        // Save the PDF
+        doc.save("quiz-results.pdf");
+      };
+  
+      secondPageImg.onerror = () => {
+        console.error("Error loading the second page background image.");
+      };
+    };
+  
+    firstPageImg.onerror = () => {
+      console.error("Error loading the first page background image.");
+    };
   };
+  
 
   if (score === null || total === null) {
     return (
@@ -142,7 +167,7 @@ const Results = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#E3F2FD] to-white flex flex-col items-center py-10 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-[#E3F2FD] to-white flex flex-col items-center py-10 px-6 ">
       {/* Progress Section */}
       <div className="w-full max-w-3xl">
         <h1 className="text-4xl font-bold text-center text-[#2563EB] mb-8">

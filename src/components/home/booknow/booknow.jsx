@@ -10,8 +10,8 @@ const BookNow = () => {
         {/* Left Section: Text Content */}
         <div className="md:w-3/5 text-center md:text-left mb-6 md:mb-0">
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-black">
-            Let's Connect – <br />
-            <span className="text-white">We’re Here to Help You</span>
+            Let's Connect - <br />
+            <span className="text-white">We're Here to Help You</span>
           </h2>
           {/* Chat Now Button */}
           <a
@@ -24,18 +24,18 @@ const BookNow = () => {
           </a>
         </div>
 
-        {/* Right Section: Image within Blue Container */}
+   
         <div className="md:w-2/5 flex justify-center md:justify-end mt-6 md:mt-0">
-          <div className="relative w-64 h-48"> {/* Adjusted width and height for a smaller image */}
+          <div className="relative w-64 h-48">
             <Image
-              src="/booknow.png" // Replace with the actual path to your image
+              src="/booknow.png" 
               alt="Smiling person"
               layout="fill"
               objectFit="cover"
               className="rounded-lg"
             />
             
-            {/* "Let's Chat" Badge */}
+   
             <div className="absolute top-4 left-4 bg-white text-black px-3 py-1 rounded-full shadow-md text-sm font-semibold">
               Let's Chat
             </div>
