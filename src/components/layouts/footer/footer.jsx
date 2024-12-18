@@ -66,7 +66,7 @@ const Footer = () => {
       {/* Sticky Call Button */}
       <button
         onClick={() => setShowPopup(true)}
-        className="fixed bottom-[15%] right-4 z-50 border-2 border-white bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 md:p-5 hover:scale-110"
+        className="fixed bottom-[18%] right-4 z-50 border-2 border-white bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 md:p-5 hover:scale-110"
         title="Request a Callback"
         style={{ fontSize: "2.5rem" }}
       >
