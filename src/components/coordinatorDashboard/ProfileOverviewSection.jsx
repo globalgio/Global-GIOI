@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import debounce from "lodash.debounce"; // Install lodash.debounce if not already
+import debounce from "lodash.debounce"; // Make sure you have this installed
 
 const ProfileOverviewSection = ({ userData, onUpdateDetails }) => {
   // State for Bank Details
@@ -12,6 +12,7 @@ const ProfileOverviewSection = ({ userData, onUpdateDetails }) => {
     accountNumber: userData.accountNumber || "",
     bankName: userData.bankName || "",
     branch: userData.branch || "",
+    accountHolderName: userData.accountHolderName || "", // New field
   });
 
   // State for UPI Details
@@ -96,12 +97,12 @@ const ProfileOverviewSection = ({ userData, onUpdateDetails }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { ifsc, accountNumber } = bankDetails;
+    const { ifsc, accountNumber, accountHolderName } = bankDetails;
     const { upiId } = upiDetails;
 
     // Basic Validation
-    if ((!ifsc || !accountNumber) && !upiId) {
-      toast.error("Please provide at least IFSC & Account Number or a UPI ID.");
+    if ((!ifsc || !accountNumber || !accountHolderName) && !upiId) {
+      toast.error("Please provide IFSC, Account Number & Account Holder Name or a UPI ID.");
       return;
     }
 
@@ -121,8 +122,10 @@ const ProfileOverviewSection = ({ userData, onUpdateDetails }) => {
       const token = localStorage.getItem("coordinatorToken"); // Ensure you store the token upon login
 
       const payload = {
-        ...(ifsc && accountNumber && { ifsc, accountNumber }),
-        ...(upiId && { upiId }),
+        ifsc,
+        accountNumber,
+        accountHolderName,
+        upiId,
       };
 
       const response = await axios.put(
@@ -198,6 +201,22 @@ const ProfileOverviewSection = ({ userData, onUpdateDetails }) => {
                 </p>
               </div>
             )}
+
+            {/* Account Holder Name */}
+            <div>
+              <label className="block text-gray-700">
+                Account Holder Name<span className="text-red-500"> *</span>
+              </label>
+              <input
+                type="text"
+                name="accountHolderName"
+                value={bankDetails.accountHolderName}
+                onChange={handleBankChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="Enter Account Holder Name"
+                required
+              />
+            </div>
 
             {/* Account Number */}
             <div>

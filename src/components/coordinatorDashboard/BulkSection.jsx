@@ -6,7 +6,7 @@ const BulkSection = () => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-
+  const token = localStorage.getItem("coordinatorToken");
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -49,10 +49,15 @@ const BulkSection = () => {
       formData.append("file", file);
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/school/bulk-upload`,
+        `${process.env.NEXT_PUBLIC_API_HOSTNAME}/api/coordinator/bulk-upload`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+
+          },
           onUploadProgress: (progressEvent) => {
             const progress = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total
