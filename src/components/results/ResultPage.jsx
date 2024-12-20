@@ -13,6 +13,7 @@ const Results = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [progress, setProgress] = useState(0);
   const [quizType, setQuizType] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     // Retrieve both quiz results from localStorage
@@ -56,7 +57,9 @@ const Results = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
+    setIsDownloading(true);
+    
     const organization = "Global Innovator Olympiad";
     const motivationalTagline =
       (score / total) * 100 >= 90
@@ -69,22 +72,32 @@ const Results = () => {
   
     const doc = new jsPDF();
   
-    const firstPageImg = new Image();
-    firstPageImg.src = "/resultpage.jpg"; // First page background
-  
-    const secondPageImg = new Image();
-    secondPageImg.src = "/resultsndpage.jpg"; // Second page background
-  
-    firstPageImg.onload = () => {
+    try {
+      // Load first page image
+      const firstPageImg = new Image();
+      await new Promise((resolve, reject) => {
+        firstPageImg.onload = resolve;
+        firstPageImg.onerror = reject;
+        firstPageImg.src = "/resultpage.jpg";
+      });
+
+      // Load second page image  
+      const secondPageImg = new Image();
+      await new Promise((resolve, reject) => {
+        secondPageImg.onload = resolve;
+        secondPageImg.onerror = reject;
+        secondPageImg.src = "/resultsndpage.jpg";
+      });
+
       // First Page
       doc.addImage(firstPageImg, "JPEG", 0, 0, 210, 297);
-  
+
       // Add Score and Motivational Tagline
       doc.setFontSize(26);
       doc.setTextColor(0, 51, 102);
       doc.setFont("helvetica", "bold");
       doc.text(`Your Score: ${score} / ${total}`, 105, 130, { align: "center" });
-  
+
       doc.setFontSize(18);
       doc.setFont("helvetica", "normal");
       doc.text(
@@ -93,75 +106,64 @@ const Results = () => {
         145,
         { align: "center" }
       );
-  
+
       doc.setFontSize(16);
       doc.setTextColor(0, 102, 0);
       doc.setFont("times", "italic");
       doc.text(motivationalTagline, 105, 165, { align: "center" });
-  
+
       // Add "Question Analysis" Title Below
       doc.setFontSize(20);
       doc.setTextColor(0, 0, 0);
       doc.setFont("helvetica", "bold");
       doc.text("Question Analysis", 105, 190, { align: "center" });
-  
-      let yPosition = 200; // Start of Question Analysis
-  
+
+      let yPosition = 200;
+
       const addNewPage = () => {
         doc.addPage();
         doc.addImage(secondPageImg, "JPEG", 0, 0, 210, 297);
-        yPosition = 30; // Reset position for new page
+        yPosition = 30;
       };
-  
-      // Load Second Page Background and Start Plotting Content
-      secondPageImg.onload = () => {
-        questions.forEach((question, index) => {
-          // Check if content exceeds page height
-          if (yPosition > 270) addNewPage();
-  
-          // Question
-          doc.setFontSize(12);
-          doc.setTextColor(0, 0, 0);
-          doc.setFont("helvetica", "normal");
-          doc.text(`Q${index + 1}: ${question.question}`, 20, yPosition);
-          yPosition += 10;
-  
-          // Correct Answer
-          doc.setTextColor(34, 139, 34); // Green
-          doc.text(`Correct Answer: ${question.answer}`, 30, yPosition);
-          yPosition += 10;
-  
-          // User Answer
-          const userAnswer = selectedAnswers[index] || "Not Answered";
-          const isCorrect = userAnswer === question.answer;
-          doc.setTextColor(
-            isCorrect ? 34 : 220,
-            isCorrect ? 139 : 20,
-            isCorrect ? 34 : 60
-          ); // Green for correct, Red for incorrect
-          doc.text(`Your Answer: ${userAnswer}`, 30, yPosition);
-          yPosition += 15; // Extra spacing
-        });
-  
-        // Save the PDF
-        doc.save("quiz-results.pdf");
-      };
-  
-      secondPageImg.onerror = () => {
-        console.error("Error loading the second page background image.");
-      };
-    };
-  
-    firstPageImg.onerror = () => {
-      console.error("Error loading the first page background image.");
-    };
+
+      questions.forEach((question, index) => {
+        if (yPosition > 270) addNewPage();
+
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Q${index + 1}: ${question.question}`, 20, yPosition);
+        yPosition += 10;
+
+        doc.setTextColor(34, 139, 34);
+        doc.text(`Correct Answer: ${question.answer}`, 30, yPosition);
+        yPosition += 10;
+
+        const userAnswer = selectedAnswers[index] || "Not Answered";
+        const isCorrect = userAnswer === question.answer;
+        doc.setTextColor(
+          isCorrect ? 34 : 220,
+          isCorrect ? 139 : 20,
+          isCorrect ? 34 : 60
+        );
+        doc.text(`Your Answer: ${userAnswer}`, 30, yPosition);
+        yPosition += 15;
+      });
+
+      doc.save("quiz-results.pdf");
+      setIsDownloading(false);
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      setIsDownloading(false);
+    }
   };
-  
 
   if (score === null || total === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Loading results...
+        
       </div>
     );
   }
@@ -232,9 +234,22 @@ const Results = () => {
       {/* Download PDF Button */}
       <button
         onClick={downloadPDF}
-        className="px-6 py-3 bg-[#4CAF50] text-white rounded-lg shadow mt-8 hover:bg-[#45A049] transition transform hover:scale-105"
+        disabled={isDownloading}
+        className={`px-6 py-3 ${
+          isDownloading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#4CAF50] hover:bg-[#45A049] hover:scale-105'
+        } text-white rounded-lg shadow mt-8 transition transform flex items-center gap-2`}
       >
-        Download Results as PDF
+        {isDownloading ? (
+          <>
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Generating PDF...
+          </>
+        ) : (
+          'Download Results as PDF'
+        )}
       </button>
 
       {/* Action Buttons */}
