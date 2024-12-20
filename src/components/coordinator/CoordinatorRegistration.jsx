@@ -161,7 +161,7 @@ const CoordinatorRegisterForm = () => {
             {registrationMessage}
           </p>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/coordinator")}
             className="mt-4 mx-auto block bg-blue-600 text-white text-xl py-4 px-8 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
           >
             Go to Login
