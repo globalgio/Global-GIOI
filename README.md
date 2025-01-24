@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Gio Gio - Global Innovator Olympiad
 
-## Getting Started
+This document provides an overview of the Gio Gio project, a platform for organizing and managing the Global Innovator Olympiad.
 
-First, run the development server:
+## Project Description
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Gio Gio is a comprehensive platform designed to facilitate the smooth and efficient execution of the Global Innovator Olympiad. It encompasses features for:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Participant Registration:** 
+    * Online registration and submission of projects.
+    * Participant profile management.
+* **Judging & Evaluation:**
+    * Online judging and scoring system.
+    * Management of judges and their assignments.
+    * Automated score calculation and result generation.
+* **Event Management:**
+    * Schedule and manage events (workshops, competitions, award ceremonies).
+    * Send notifications and reminders to participants and organizers.
+* **Admin Panel:** 
+    * Dashboard for administrators to oversee all aspects of the Olympiad.
+    * User management and role-based access control.
+    * Data analysis and reporting.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Technologies Used
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Frontend:**
+    * React
+    * Next.js
+    * Tailwind CSS
+    * JavaScript
+* **Backend:**
+    * Node.js
+    * Express.js 
+    * [Specify Database: e.g., MongoDB, PostgreSQL]
+* **Cloud:** 
+    * [Specify cloud provider: e.g., AWS, Azure, Google Cloud] 
+* **Other:** 
+    * [List other relevant technologies: e.g., Docker, Kubernetes, CI/CD tools]
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+* **`client`:** 
+    * **`components`:** Reusable React components.
+    * **`pages`:** Next.js pages for routing (e.g., `index.js`, `register.js`, `results.js`).
+    * **`styles`:** Tailwind CSS configuration and global styles.
+    * **`public`:** Static assets (images, logos, etc.).
+* **`server`:** 
+    * **`routes`:** API routes for user authentication, data management, etc.
+    * **`models`:** Database models (e.g., User, Project, Judge).
+    * **`controllers`:** Controllers to handle API requests.
+    * **`services`:** Services for business logic and data processing.
+* **`admin`:** 
+    * **`components`:** Admin panel components.
+    * **`pages`:** Admin panel pages (dashboard, user management, event management).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* **Start the development server:**
+    ```bash
+    npm run dev 
+    ```
 
-## Deploy on Vercel
+* **Build for production:**
+    ```bash
+    npm run build
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Run the production server:**
+    ```bash
+    npm start
+    ```
