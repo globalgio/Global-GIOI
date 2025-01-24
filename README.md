@@ -1,4 +1,4 @@
-# Gio Gio - Global Innovator Olympiad
+# GIO - Global Innovator Olympiad
 
 This document provides an overview of the Gio Gio project, a platform for organizing and managing the Global Innovator Olympiad.
 
