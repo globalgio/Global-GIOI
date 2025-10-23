@@ -1,7 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import { motion } from "framer-motion";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaShieldAlt,
+  FaCertificate,
+  FaWhatsapp,
+  FaInstagram,
+  FaDownload,
+} from "react-icons/fa";
 
 const VerifyCertificate = () => {
   const [certificateId, setCertificateId] = useState("");
@@ -11,7 +19,6 @@ const VerifyCertificate = () => {
   const [certificateData, setCertificateData] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
 
-  // Motivational Taglines
   const taglines = [
     "Believe in yourself and all that you are!",
     "Every step you take brings you closer to success.",
@@ -38,10 +45,10 @@ const VerifyCertificate = () => {
         const nextIndex = (currentIndex + 1) % taglines.length;
         return taglines[nextIndex];
       });
-    }, 5000); // Change tagline every 5 seconds
+    }, 5000);
 
-    return () => clearInterval(interval); // Clean up interval on unmount
-  }, [taglines]);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleVerification = async (e) => {
     e.preventDefault();
@@ -183,131 +190,380 @@ const VerifyCertificate = () => {
   };
 
   return (
-    <section className="verify-section w-full flex flex-col items-center justify-center bg-[#f4f6f9] py-8 px-4">
-      <div className="w-full max-w-4xl bg-white rounded-3xl flex flex-col items-center p-4 sm:p-6 md:p-8 lg:p-12 shadow-lg">
-        <div className="text-center mb-6">
-          <motion.h1
-            className="text-xl sm:text-2xl md:text-3xl font-bold text-[#106EB5]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            Certificate Verification
-          </motion.h1>
-          <motion.p
-            className="text-sm md:text-lg mt-4 text-gray-700"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-          >
-            Enter the Credential ID to verify its authenticity.
-          </motion.p>
+    <>
+      <style>{`
+        @layer utilities {
+          @keyframes slide-in-up {
+            from {
+              opacity: 0;
+              transform: translateY(60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes fade-in-up {
+            from {
+              opacity: 0;
+              transform: translateY(40px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes float {
+            0%, 100% {
+              transform: translate(0, 0) scale(1);
+            }
+            33% {
+              transform: translate(30px, -30px) scale(1.05);
+            }
+            66% {
+              transform: translate(-25px, 25px) scale(0.95);
+            }
+          }
+
+          @keyframes float-delayed {
+            0%, 100% {
+              transform: translate(0, 0) scale(1);
+            }
+            33% {
+              transform: translate(-35px, 30px) scale(1.08);
+            }
+            66% {
+              transform: translate(25px, -25px) scale(0.92);
+            }
+          }
+
+          @keyframes pulse-slow {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.08);
+              opacity: 0.8;
+            }
+          }
+
+          @keyframes shimmer {
+            0% {
+              background-position: -200% center;
+            }
+            100% {
+              background-position: 200% center;
+            }
+          }
+
+          @keyframes rotate-gradient {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+
+          @keyframes fade-slide {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes success-pulse {
+            0%, 100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.1);
+            }
+          }
+
+          .animate-slide-in-up {
+            animation: slide-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          }
+
+          .animate-fade-in-up {
+            opacity: 0;
+            animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          }
+
+          .animate-float {
+            animation: float 8s ease-in-out infinite;
+          }
+
+          .animate-float-delayed {
+            animation: float-delayed 9s ease-in-out infinite;
+          }
+
+          .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+          }
+
+          .animate-shimmer {
+            animation: shimmer 3s linear infinite;
+          }
+
+          .animate-rotate-gradient {
+            animation: rotate-gradient 8s linear infinite;
+          }
+
+          .animate-fade-slide {
+            animation: fade-slide 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          }
+
+          .animate-success-pulse {
+            animation: success-pulse 1s ease-in-out;
+          }
+
+          .animation-delay-200 {
+            animation-delay: 0.2s;
+          }
+
+          .animation-delay-400 {
+            animation-delay: 0.4s;
+          }
+
+          .animation-delay-600 {
+            animation-delay: 0.6s;
+          }
+
+          .gradient-text {
+            background: linear-gradient(90deg, #0066CC, #00D4FF, #FFD700, #00D4FF, #0066CC);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+        }
+      `}</style>
+
+      <section className="relative w-full bg-gradient-to-br from-[#F5F7FA] via-white to-[#F5F7FA] py-16 md:py-20 px-6 sm:px-8 lg:px-12 xl:px-20 overflow-hidden">
+        {/* Animated Background Orbs */}
+        <div className="absolute inset-0 opacity-[0.06]">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-[#0066CC] rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-[#FFD700] rounded-full blur-3xl animate-float-delayed"></div>
+          <div
+            className="absolute top-1/2 left-1/2 w-[450px] h-[450px] bg-[#10B981] rounded-full blur-3xl animate-float"
+            style={{ animationDelay: "1s" }}
+          ></div>
         </div>
 
-        {/* Tagline Section */}
-        <motion.div
-          className="text-center text-gray-700 font-semibold text-lg mt-6 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
-          "{currentTagline}"
-        </motion.div>
-        {/* Video Link */}
-        <motion.div
-          className="text-center mt-4 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
-        >
-          <a
-            href="https://www.youtube.com/watch?v=yzqs5i_aASM" // Replace with your video link
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm md:text-base text-blue-600 font-semibold hover:underline"
-          >
-            📹 Watch how to verify your certificate
-          </a>
-        </motion.div>
-        <motion.form
-          className="w-full max-w-md space-y-4"
-          onSubmit={handleVerification}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
-        >
-          <div>
-            <label
-              htmlFor="certificateId"
-              className="block text-sm font-medium text-black"
-            >
-              Credential ID
-            </label>
-            <input
-              type="text"
-              id="certificateId"
-              value={certificateId}
-              onChange={(e) => setCertificateId(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-md mt-2 text-sm md:text-base"
-              placeholder="Enter the Credential ID"
-            />
-          </div>
+        {/* Main Container */}
+        <div className="relative z-10 max-w-5xl mx-auto">
+          {/* Main Card */}
+          <div className="relative">
+            {/* Rotating Gradient Glow */}
+            <div className="absolute -inset-2 bg-gradient-to-r from-[#0066CC] via-[#00D4FF] to-[#FFD700] rounded-3xl blur-2xl opacity-20 animate-rotate-gradient"></div>
 
-          <motion.button
-            type="submit"
-            className="w-full py-3 text-white bg-[#106EB5] rounded-md mt-4 text-sm md:text-base hover:bg-blue-600"
-            disabled={loading}
-            whileHover={{ scale: 1.03 }}
-          >
-            {loading ? "Verifying..." : "Verify Certificate"}
-          </motion.button>
-        </motion.form>
+            {/* Card Content */}
+            <div className="relative bg-white rounded-3xl shadow-2xl p-8 sm:p-10 md:p-12 lg:p-16 border-4 border-white ring-4 ring-[#0066CC]/20">
+              {/* Header Section */}
+              <div className="text-center mb-10 animate-slide-in-up">
+                <div className="inline-flex items-center gap-3 mb-6">
+                  <FaShieldAlt className="text-5xl text-[#0066CC] animate-pulse-slow" />
+                  <FaCertificate
+                    className="text-5xl text-[#FFD700] animate-pulse-slow"
+                    style={{ animationDelay: "0.3s" }}
+                  />
+                </div>
 
-        {verificationStatus && (
-          <motion.div
-            className={`mt-4 text-center text-sm md:text-lg font-semibold ${
-              isVerified ? "text-green-500" : "text-red-500"
-            }`}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.6 }}
-          >
-            {verificationStatus}
-          </motion.div>
-        )}
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1A1A1A] mb-4">
+                  Certificate{" "}
+                  <span className="gradient-text animate-shimmer">
+                    Verification
+                  </span>
+                </h1>
 
-        {pdfUrl && (
-          <div className="mt-6 w-full text-center">
-            <iframe
-              src={pdfUrl}
-              width="100%"
-              height="600px"
-              className="rounded-md shadow-lg"
-              title="Certificate Preview"
-            ></iframe>
+                <div className="w-32 h-1 bg-gradient-to-r from-[#0066CC] via-[#00D4FF] to-[#FFD700] mx-auto rounded-full mb-6"></div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-              <a
-                href={`https://wa.me/?text=Check out my certificate: ${pdfUrl}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 text-sm sm:text-base"
-              >
-                Share on WhatsApp
-              </a>
-              <a
-                href={pdfUrl}
-                download="Certificate.pdf"
-                className="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 text-sm sm:text-base"
-              >
-                Download & Share on Instagram
-              </a>
+                <p className="text-base sm:text-lg lg:text-xl text-[#2C3E50] max-w-2xl mx-auto">
+                  Enter the{" "}
+                  <span className="font-bold text-[#0066CC]">
+                    Credential ID
+                  </span>{" "}
+                  to verify its authenticity and download your certificate.
+                </p>
+              </div>
+
+              {/* Tagline Section */}
+              <div className="text-center mb-8 animate-fade-in-up animation-delay-200">
+                <div className="relative inline-block px-8 py-4 bg-gradient-to-r from-[#FFD700]/10 to-[#D4AF37]/10 rounded-2xl border-2 border-[#FFD700]/30">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-[#FFD700] animate-pulse-slow"></div>
+                      <div
+                        className="w-2 h-2 rounded-full bg-[#00D4FF] animate-pulse-slow"
+                        style={{ animationDelay: "0.3s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 rounded-full bg-[#0066CC] animate-pulse-slow"
+                        style={{ animationDelay: "0.6s" }}
+                      ></div>
+                    </div>
+                  </div>
+                  <p className="text-lg sm:text-xl font-semibold text-[#1A1A1A] animate-fade-slide">
+                    ✨ "{currentTagline}"
+                  </p>
+                </div>
+              </div>
+
+              {/* Video Link */}
+              <div className="text-center mb-8 animate-fade-in-up animation-delay-400">
+                <a
+                  href="https://www.youtube.com/watch?v=yzqs5i_aASM"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span className="text-2xl">📹</span>
+                  <span>Watch How to Verify</span>
+                </a>
+              </div>
+
+              {/* Verification Form */}
+              <div className="max-w-md mx-auto mb-8 animate-fade-in-up animation-delay-600">
+                <div className="relative mb-6">
+                  <label
+                    htmlFor="certificateId"
+                    className="block text-sm font-bold text-[#1A1A1A] mb-3"
+                  >
+                    Credential ID
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="certificateId"
+                      value={certificateId}
+                      onChange={(e) => setCertificateId(e.target.value)}
+                      required
+                      className="w-full px-5 py-4 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium"
+                      placeholder="Enter your Credential ID"
+                    />
+                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                      <FaCertificate className="text-[#0066CC] text-xl" />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleVerification}
+                  className="group relative w-full py-4 bg-gradient-to-r from-[#0066CC] to-[#4D9FFF] text-white font-bold rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-[#0066CC]/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading}
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Verifying...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaShieldAlt />
+                        <span>Verify Certificate</span>
+                      </>
+                    )}
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#4D9FFF] to-[#0066CC] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+              </div>
+
+              {/* Verification Status */}
+              {verificationStatus && (
+                <div
+                  className={`text-center mb-8 animate-fade-in-up ${
+                    isVerified ? "animate-success-pulse" : ""
+                  }`}
+                >
+                  <div
+                    className={`inline-flex items-center gap-3 px-6 py-4 rounded-2xl border-3 ${
+                      isVerified
+                        ? "bg-[#10B981]/10 border-[#10B981] text-[#10B981]"
+                        : "bg-[#EF4444]/10 border-[#EF4444] text-[#EF4444]"
+                    }`}
+                  >
+                    {isVerified ? (
+                      <FaCheckCircle className="text-3xl" />
+                    ) : (
+                      <FaTimesCircle className="text-3xl" />
+                    )}
+                    <span className="text-lg font-bold">
+                      {verificationStatus}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Certificate Preview */}
+              {pdfUrl && (
+                <div className="mt-10 animate-fade-in-up">
+                  <div className="relative mb-6">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-[#FFD700] via-[#00D4FF] to-[#0066CC] rounded-2xl blur-xl opacity-30 animate-rotate-gradient"></div>
+                    <iframe
+                      src={pdfUrl}
+                      width="100%"
+                      height="600px"
+                      className="relative rounded-2xl shadow-2xl border-4 border-white"
+                      title="Certificate Preview"
+                    ></iframe>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <a
+                      href={`https://wa.me/?text=Check out my certificate: ${pdfUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative px-6 py-4 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white font-bold rounded-xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-[#25D366]/50 flex items-center justify-center gap-2"
+                    >
+                      <FaWhatsapp className="text-2xl" />
+                      <span>WhatsApp</span>
+                    </a>
+
+                    <a
+                      href={pdfUrl}
+                      download="Certificate.pdf"
+                      className="group relative px-6 py-4 bg-gradient-to-r from-[#E4405F] to-[#C13584] text-white font-bold rounded-xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-[#E4405F]/50 flex items-center justify-center gap-2"
+                    >
+                      <FaInstagram className="text-2xl" />
+                      <span>Instagram</span>
+                    </a>
+
+                    <a
+                      href={pdfUrl}
+                      download="Certificate.pdf"
+                      className="group relative px-6 py-4 bg-gradient-to-r from-[#0066CC] to-[#4D9FFF] text-white font-bold rounded-xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-[#0066CC]/50 flex items-center justify-center gap-2"
+                    >
+                      <FaDownload className="text-xl" />
+                      <span>Download</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Security Badge */}
+              <div className="mt-10 text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#10B981]/10 rounded-full border border-[#10B981]/30">
+                  <FaShieldAlt className="text-[#10B981]" />
+                  <span className="text-sm font-semibold text-[#10B981]">
+                    Secure Verification System
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 };
 

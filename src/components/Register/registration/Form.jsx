@@ -5,13 +5,14 @@ import { Country, State, City } from "country-state-city";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaUser, FaEnvelope, FaLock, FaPhone, FaWhatsapp, FaGlobe, FaMapMarkerAlt, FaCity, FaSchool, FaGraduationCap, FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Form = () => {
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     password: "",
-    confirmPassword: "", // New field for confirming password
+    confirmPassword: "",
     country: "",
     state: "",
     city: "",
@@ -26,12 +27,13 @@ const Form = () => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(false); // Toggle between login and registration
-  const [passwordError, setPasswordError] = useState(""); // To store password validation error
+  const [isLogin, setIsLogin] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     confirmPassword: false,
   });
+
   const togglePasswordVisibility = (field) => {
     setPasswordVisibility((prev) => ({
       ...prev,
@@ -58,8 +60,8 @@ const Form = () => {
       setStates(State.getStatesOfCountry(selectedCountry?.isoCode || ""));
       setFormData({
         ...formData,
-        country: selectedCountry ? selectedCountry.name : "", // Save full name in formData
-        countryCode: value, // Save the isoCode for dropdown selection
+        country: selectedCountry ? selectedCountry.name : "",
+        countryCode: value,
         state: "",
         city: "",
       });
@@ -78,8 +80,8 @@ const Form = () => {
       );
       setFormData({
         ...formData,
-        state: selectedState ? selectedState.name : "", // Save full name in formData
-        stateCode: value, // Save the isoCode for dropdown selection
+        state: selectedState ? selectedState.name : "",
+        stateCode: value,
         city: "",
       });
       return;
@@ -89,7 +91,7 @@ const Form = () => {
       const selectedCity = cities.find((city) => city.name === value);
       setFormData({
         ...formData,
-        city: selectedCity ? selectedCity.name : "", // Save full name in formData
+        city: selectedCity ? selectedCity.name : "",
       });
       return;
     }
@@ -104,13 +106,11 @@ const Form = () => {
     e.preventDefault();
 
     if (isLogin) {
-      // Validate username and password for login
       if (!formData.username || !formData.password) {
-        toast.error("username and password are required for login.");
+        toast.error("Username and password are required for login.");
         return;
       }
     } else {
-      // Validate registration-specific fields
       if (formData.password !== formData.confirmPassword) {
         setPasswordError("Passwords do not match.");
         toast.error("Passwords do not match.");
@@ -128,22 +128,17 @@ const Form = () => {
 
       const response = await axios.post(url, formData);
 
-      // Store the token in localStorage
       localStorage.setItem("token", response.data.token);
 
       toast.success(`${isLogin ? "Login" : "Registration"} successful!`);
 
-      // Redirect to profile after successful login/registration
       window.location.href = "/profile";
     } catch (error) {
-      // Error handling for login or registration
       console.error(`${isLogin ? "Login" : "Registration"} failed:`, error);
 
       if (error.response && error.response.data.message) {
-        // Show error message returned by backend
         toast.error(error.response.data.message);
       } else {
-        // Show generic error message
         toast.error(
           `${isLogin ? "Login" : "Registration"} failed. Please try again.`
         );
@@ -154,354 +149,574 @@ const Form = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl p-6 sm:p-8 lg:p-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-[#2563EB] text-transparent bg-clip-text mb-6 drop-shadow-xl">
-          {isLogin
-            ? "🌟 Rediscover Innovation - GIO Login 🌟"
-            : "🌈 Step Into Innovation - GIO Registration 🌈"}
-        </h1>
-        <p className="text-center text-gray-700 mb-6 text-lg italic leading-relaxed">
-          {isLogin
-            ? "✨ Access your gateway to global brilliance. Log in to GIO and keep innovating! ✨"
-            : "🌟 Unleash your potential and join the global stage of innovation. Register now for the GIO and make your mark! 🌟"}
-        </p>
+    <>
+      <style>{`
+        @layer utilities {
+          @keyframes slide-in-up {
+            from {
+              opacity: 0;
+              transform: translateY(60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
 
-        {/* Video Link for Registration */}
-        {!isLogin && (
-          <div className="text-center mb-6">
-            <a
-              href="https://www.youtube.com/watch?v=CKCYNEJmjK4"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:underline font-semibold"
-            >
-              📹 Watch a step-by-step guide to registration
-            </a>
-          </div>
-        )}
+          @keyframes fade-in-up {
+            from {
+              opacity: 0;
+              transform: translateY(40px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
 
-        <div className="text-center mb-6">
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-blue-500 hover:underline"
-          >
-            {isLogin
-              ? "Don't have an account? Register"
-              : "Already have an account? Login"}
-          </button>
+          @keyframes float {
+            0%, 100% {
+              transform: translate(0, 0) scale(1);
+            }
+            33% {
+              transform: translate(30px, -30px) scale(1.05);
+            }
+            66% {
+              transform: translate(-25px, 25px) scale(0.95);
+            }
+          }
+
+          @keyframes float-delayed {
+            0%, 100% {
+              transform: translate(0, 0) scale(1);
+            }
+            33% {
+              transform: translate(-35px, 30px) scale(1.08);
+            }
+            66% {
+              transform: translate(25px, -25px) scale(0.92);
+            }
+          }
+
+          @keyframes pulse-slow {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.08);
+              opacity: 0.8;
+            }
+          }
+
+          @keyframes shimmer {
+            0% {
+              background-position: -200% center;
+            }
+            100% {
+              background-position: 200% center;
+            }
+          }
+
+          @keyframes rotate-gradient {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+
+          .animate-slide-in-up {
+            animation: slide-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          }
+
+          .animate-fade-in-up {
+            opacity: 0;
+            animation: fade-in-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          }
+
+          .animate-float {
+            animation: float 8s ease-in-out infinite;
+          }
+
+          .animate-float-delayed {
+            animation: float-delayed 9s ease-in-out infinite;
+          }
+
+          .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+          }
+
+          .animate-shimmer {
+            animation: shimmer 3s linear infinite;
+          }
+
+          .animate-rotate-gradient {
+            animation: rotate-gradient 8s linear infinite;
+          }
+
+          .animation-delay-200 {
+            animation-delay: 0.2s;
+          }
+
+          .animation-delay-400 {
+            animation-delay: 0.4s;
+          }
+
+          .gradient-text {
+            background: linear-gradient(90deg, #0066CC, #00D4FF, #FFD700, #00D4FF, #0066CC);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+        }
+      `}</style>
+
+      <div className="relative min-h-screen bg-gradient-to-br from-[#F5F7FA] via-white to-[#F5F7FA] py-16 px-6 sm:px-8 lg:px-12 xl:px-20 overflow-hidden">
+        <ToastContainer position="top-right" autoClose={3000} />
+
+        {/* Animated Background Orbs */}
+        <div className="absolute inset-0 opacity-[0.06]">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-[#0066CC] rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-[#FFD700] rounded-full blur-3xl animate-float-delayed"></div>
+          <div
+            className="absolute top-1/2 left-1/2 w-[450px] h-[450px] bg-[#10B981] rounded-full blur-3xl animate-float"
+            style={{ animationDelay: "1s" }}
+          ></div>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {/* username */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
-            <input
-              type="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type={passwordVisibility.password ? "text" : "password"}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => togglePasswordVisibility("password")}
-              className="absolute right-3 top-10 text-gray-600 focus:outline-none"
-            >
-              {passwordVisibility.password ? "👁️" : "🙈"}
-            </button>
-          </div>
-
-          {/* Confirm Password */}
-          {!isLogin && (
-            <div className="col-span-1 relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <input
-                type={passwordVisibility.confirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                required
+        {/* Main Container */}
+        <div className="relative z-10 max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12 animate-slide-in-up">
+            <div className="inline-flex items-center gap-3 mb-6">
+              <FaUserShield className="text-5xl text-[#0066CC] animate-pulse-slow" />
+              <FaGraduationCap
+                className="text-5xl text-[#FFD700] animate-pulse-slow"
+                style={{ animationDelay: "0.3s" }}
               />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility("confirmPassword")}
-                className="absolute right-3 top-10 text-gray-600 focus:outline-none"
-              >
-                {passwordVisibility.confirmPassword ? "👁️" : "🙈"}
-              </button>
-              {passwordError && (
-                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-              )}
             </div>
-          )}
-          {/* Registration fields */}
-          {!isLogin && (
-            <>
-              {/* Name */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                  <span className="text-xs ml-1 font-semibold text-blue-600">
-                    (as it appears on the certificate)
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#1A1A1A] mb-4">
+              {isLogin ? (
+                <>
+                  Rediscover{" "}
+                  <span className="gradient-text animate-shimmer">
+                    Innovation
                   </span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border uppercase border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                />
-              </div>
+                </>
+              ) : (
+                <>
+                  Step Into{" "}
+                  <span className="gradient-text animate-shimmer">
+                    Innovation
+                  </span>
+                </>
+              )}
+            </h1>
 
-              {/* Phone Number */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  name="PhoneNumber"
-                  value={formData.PhoneNumber}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                />
-              </div>
+            <div className="w-32 h-1 bg-gradient-to-r from-[#0066CC] via-[#00D4FF] to-[#FFD700] mx-auto rounded-full mb-6"></div>
 
-              {/* WhatsApp Number */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  WhatsApp Number
-                </label>
-                <input
-                  type="text"
-                  name="whatsappNumber"
-                  value={formData.whatsappNumber}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                  disabled={formData.sameAsPhone}
-                />
-              </div>
+            <p className="text-lg sm:text-xl lg:text-2xl text-[#2C3E50] max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200">
+              {isLogin ? (
+                <>
+                  ✨ Access your gateway to global brilliance.{" "}
+                  <span className="font-bold text-[#0066CC]">
+                    Log in to GIO
+                  </span>{" "}
+                  and keep innovating! ✨
+                </>
+              ) : (
+                <>
+                  🌟 Unleash your potential and join the global stage of
+                  innovation.{" "}
+                  <span className="font-bold text-[#FFD700]">
+                    Register now for the GIO
+                  </span>{" "}
+                  and make your mark! 🌟
+                </>
+              )}
+            </p>
 
-              {/* Same as Phone Number */}
-              <div className="col-span-1 flex items-center">
-                <input
-                  type="checkbox"
-                  name="sameAsPhone"
-                  checked={formData.sameAsPhone}
-                  onChange={handleChange}
-                  className="h-5 w-5 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label className="ml-2 text-sm font-medium text-gray-700">
-                  Same as Phone Number
-                </label>
-              </div>
-              {/* Country */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country
-                </label>
-                <select
-                  name="country"
-                  value={formData.countryCode || ""} // Use isoCode for the selected value
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
+            {/* Video Link */}
+            {/* Video Link */}
+            {!isLogin && (
+              <div className="mt-6 animate-fade-in-up animation-delay-400">
+                <a
+                  href="https://www.youtube.com/watch?v=CKCYNEJmjK4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
-                  <option value="" disabled>
-                    Select Country
-                  </option>
-                  {Country.getAllCountries().map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
+                  <span className="text-2xl">📹</span>
+                  <span>Watch Registration Guide</span>
+                </a>
               </div>
+            )}
 
-              {/* State */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  State
-                </label>
-                <select
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                >
-                  <option value="" disabled>
-                    Select State
-                  </option>
-                  {states.map((state) => (
-                    <option key={state.isoCode} value={state.isoCode}>
-                      {state.name} {/* Save full state name */}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* City */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  City
-                </label>
-                <select
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                >
-                  <option value="" disabled>
-                    Select City
-                  </option>
-                  {cities.map((city) => (
-                    <option key={city.name} value={city.name}>
-                      {city.name} {/* Save full city name */}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Teacher Phone Number */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Teacher Phone Number
-                </label>
-                <input
-                  type="text"
-                  name="teacherPhoneNumber"
-                  value={formData.teacherPhoneNumber}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                />
-              </div>
-
-              {/* Standard */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Standard
-                </label>
-                <select
-                  name="standard"
-                  value={formData.standard}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                >
-                  <option value="" disabled>
-                    Select Standard
-                  </option>
-                  {["5th", "6th", "7th", "8th", "9th", "10th"].map((std) => (
-                    <option key={std} value={std}>
-                      {std}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* School Name */}
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  School Name
-                </label>
-                <input
-                  type="text"
-                  name="schoolName"
-                  value={formData.schoolName}
-                  onChange={handleChange}
-                  className="w-full p-3 rounded-md border uppercase border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  required
-                />
-              </div>
-            </>
-          )}
-
-          {/* Submit Button */}
-          <div className="col-span-full">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-3 rounded-lg font-semibold text-sm shadow-md transition ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600 text-white"
-              }`}
-            >
-              {loading ? "Submitting..." : isLogin ? "Login" : "Register"}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Forgot Password Modal */}
-      {/* {forgotPassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold text-center text-blue-700 mb-4">
-              Forgot Password
-            </h2>
-            <form onSubmit={handleForgotPassword}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter your username
-              </label>
-              <input
-                type="username"
-                value={resetusername}
-                onChange={(e) => setResetusername(e.target.value)}
-                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                required
-              />
+            {/* Toggle Login/Register */}
+            <div className="mt-6">
               <button
-                type="submit"
-                className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
-                disabled={loading}
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-lg text-[#0066CC] font-bold hover:text-[#00D4FF] underline transition-colors"
               >
-                {loading ? "Sending..." : "Send Reset Link"}
+                {isLogin
+                  ? "Don't have an account? Register here"
+                  : "Already have an account? Login here"}
               </button>
-            </form>
-            <button
-              onClick={() => setForgotPassword(false)}
-              className="w-full mt-4 text-center text-blue-500 hover:underline"
-            >
-              Cancel
-            </button>
+            </div>
+          </div>
+
+          {/* Form Card */}
+          <div className="animate-fade-in-up animation-delay-400">
+            <div className="relative max-w-6xl mx-auto">
+              <div className="absolute -inset-2 bg-gradient-to-r from-[#0066CC] via-[#00D4FF] to-[#FFD700] rounded-3xl blur-2xl opacity-20 animate-rotate-gradient"></div>
+
+              <div className="relative bg-white rounded-3xl shadow-2xl p-8 sm:p-10 md:p-12 lg:p-14 border-4 border-white ring-4 ring-[#0066CC]/20">
+                <form
+                  onSubmit={handleSubmit}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {/* Username */}
+                  <div className="relative">
+                    <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                      Username
+                    </label>
+                    <div className="relative">
+                      <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                      <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black"
+                        placeholder="Enter your username"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div className="relative">
+                    <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                      <input
+                        type={passwordVisibility.password ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="w-full pl-12 pr-12 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black"
+                        placeholder="Enter your password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => togglePasswordVisibility("password")}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-xl z-10"
+                      >
+                        {passwordVisibility.password ? (
+                          <FaEye />
+                        ) : (
+                          <FaEyeSlash />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  {!isLogin && (
+                    <div className="relative">
+                      <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                        Confirm Password
+                      </label>
+                      <div className="relative">
+                        <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                        <input
+                          type={
+                            passwordVisibility.confirmPassword
+                              ? "text"
+                              : "password"
+                          }
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          className="w-full pl-12 pr-12 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black"
+                          placeholder="Confirm your password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            togglePasswordVisibility("confirmPassword")
+                          }
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-xl z-10"
+                        >
+                          {passwordVisibility.confirmPassword ? (
+                            <FaEye />
+                          ) : (
+                            <FaEyeSlash />
+                          )}
+                        </button>
+                      </div>
+                      {passwordError && (
+                        <p className="text-[#EF4444] text-sm mt-1 font-semibold">
+                          {passwordError}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Registration Fields */}
+                  {!isLogin && (
+                    <>
+                      {/* Full Name */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          Full Name
+                          <span className="text-xs ml-1 text-[#FFD700]">
+                            (as on certificate)
+                          </span>
+                        </label>
+                        <div className="relative">
+                          <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black uppercase"
+                            placeholder="FULL NAME"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Phone Number */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          Phone Number
+                        </label>
+                        <div className="relative">
+                          <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <input
+                            type="tel"
+                            name="PhoneNumber"
+                            value={formData.PhoneNumber}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black"
+                            placeholder="+1234567890"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* WhatsApp Number */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          WhatsApp Number
+                        </label>
+                        <div className="relative">
+                          <FaWhatsapp className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#25D366] text-lg z-10" />
+                          <input
+                            type="tel"
+                            name="whatsappNumber"
+                            value={formData.whatsappNumber}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#25D366]/30 rounded-xl focus:border-[#25D366] focus:ring-4 focus:ring-[#25D366]/20 transition-all duration-300 text-base font-medium text-black disabled:bg-gray-100"
+                            placeholder="+1234567890"
+                            required
+                            disabled={formData.sameAsPhone}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Same as Phone Checkbox */}
+                      <div className="flex items-center gap-3 pt-8">
+                        <input
+                          type="checkbox"
+                          name="sameAsPhone"
+                          checked={formData.sameAsPhone}
+                          onChange={handleChange}
+                          className="w-5 h-5 text-[#0066CC] focus:ring-[#0066CC] border-[#0066CC] rounded"
+                        />
+                        <label className="text-base font-semibold text-[#2C3E50]">
+                          Same as Phone Number
+                        </label>
+                      </div>
+
+                      {/* Country */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          Country
+                        </label>
+                        <div className="relative">
+                          <FaGlobe className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <select
+                            name="country"
+                            value={formData.countryCode || ""}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black appearance-none bg-white"
+                            required
+                          >
+                            <option value="">Select Country</option>
+                            {Country.getAllCountries().map((country) => (
+                              <option
+                                key={country.isoCode}
+                                value={country.isoCode}
+                              >
+                                {country.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* State */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          State
+                        </label>
+                        <div className="relative">
+                          <FaMapMarkerAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <select
+                            name="state"
+                            value={formData.stateCode || ""}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black appearance-none bg-white"
+                            required
+                          >
+                            <option value="">Select State</option>
+                            {states.map((state) => (
+                              <option key={state.isoCode} value={state.isoCode}>
+                                {state.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* City */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          City
+                        </label>
+                        <div className="relative">
+                          <FaCity className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <select
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black appearance-none bg-white"
+                            required
+                          >
+                            <option value="">Select City</option>
+                            {cities.map((city) => (
+                              <option key={city.name} value={city.name}>
+                                {city.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Teacher Phone */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          Teacher Phone Number
+                        </label>
+                        <div className="relative">
+                          <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <input
+                            type="tel"
+                            name="teacherPhoneNumber"
+                            value={formData.teacherPhoneNumber}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black"
+                            placeholder="+1234567890"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Standard */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          Standard
+                        </label>
+                        <div className="relative">
+                          <FaGraduationCap className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <select
+                            name="standard"
+                            value={formData.standard}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black appearance-none bg-white"
+                            required
+                          >
+                            <option value="">Select Standard</option>
+                            {["5th", "6th", "7th", "8th", "9th", "10th"].map(
+                              (std) => (
+                                <option key={std} value={std}>
+                                  {std}
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* School Name */}
+                      <div className="relative">
+                        <label className="block font-bold text-base text-[#1A1A1A] mb-2">
+                          School Name
+                        </label>
+                        <div className="relative">
+                          <FaSchool className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0066CC] text-lg z-10" />
+                          <input
+                            type="text"
+                            name="schoolName"
+                            value={formData.schoolName}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 border-2 border-[#0066CC]/30 rounded-xl focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/20 transition-all duration-300 text-base font-medium text-black uppercase"
+                            placeholder="SCHOOL NAME"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Submit Button */}
+                  <div className="col-span-full mt-6">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="group relative w-full py-5 bg-gradient-to-r from-[#0066CC] to-[#4D9FFF] text-white font-bold text-xl rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-[#0066CC]/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {loading ? (
+                          <>
+                            <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>Processing...</span>
+                          </>
+                        ) : (
+                          <span>{isLogin ? "Login" : "Register"}</span>
+                        )}
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#4D9FFF] to-[#0066CC] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-      )} */}
-    </div>
+      </div>
+    </>
   );
 };
 
